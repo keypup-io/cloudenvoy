@@ -1,0 +1,46 @@
+require: rubocop-rspec
+
+AllCops:
+  Exclude:
+    - 'gemfiles/**/*'
+    - 'vendor/**/*'
+
+Metrics/ClassLength:
+  Max: 150
+
+Metrics/ModuleLength:
+  Max: 150
+
+Metrics/AbcSize:
+  Max: 20
+
+Metrics/LineLength:
+  Max: 120
+
+Metrics/MethodLength:
+  Max: 20
+
+RSpec/ExpectInHook:
+  Enabled: false
+
+RSpec/EmptyLineAfterHook:
+  Enabled: false
+
+RSpec/ScatteredSetup:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - cloudenvoy.gemspec
+    - 'spec/**/*'
+
+Style/Documentation:
+  Exclude:
+    - 'examples/**/*'
+    - 'spec/**/*'
+
+Metrics/ParameterLists:
+  CountKeywordArgs: false
+
+RSpec/MessageSpies:
+  Enabled: false
