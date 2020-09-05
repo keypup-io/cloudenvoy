@@ -16,9 +16,8 @@ module Cloudenvoy
       Please specify a processor hostname in form of `https://some-public-dns.example.com`'
     DOC
     SUB_PREFIX_MISSING_ERROR = <<~DOC
-      Missing GCP queue prefix.
-      Please specify a queue prefix in the form of `my-app`.
-      You can create a default queue using the Google SDK via `gcloud tasks queues create my-app-default`
+      Missing GCP subscription prefix.
+      Please specify a subscription prefix in the form of `my-app`.
     DOC
     PROJECT_ID_MISSING_ERROR = <<~DOC
       Missing GCP project ID.
@@ -128,7 +127,7 @@ module Cloudenvoy
 
     #
     # Return the secret to use to sign the verification tokens
-    # attached to tasks.
+    # attached to messages.
     #
     # @return [String] The cloudenvoy secret
     #
