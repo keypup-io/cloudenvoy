@@ -23,3 +23,18 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 end
+
+# Configure for tests
+Cloudenvoy.configure do |config|
+  # GCP
+  config.gcp_project_id = 'my-project-id'
+  config.gcp_sub_prefix = 'my-app'
+
+  # Processor
+  config.secret = 'my$s3cr3t'
+  config.processor_host = 'http://localhost'
+  config.processor_path = '/mynamespace/run'
+
+  # Logger
+  config.logger = Logger.new(nil)
+end

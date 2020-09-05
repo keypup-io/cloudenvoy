@@ -3,6 +3,10 @@
 require 'cloudenvoy/version'
 require 'cloudenvoy/config'
 
+require 'cloudenvoy/authentication_error'
+
+require 'cloudenvoy/authenticator'
+
 # Define and manage Cloud Pub/Sub publishers and subscribers
 module Cloudenvoy
   attr_writer :config
