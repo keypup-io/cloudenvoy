@@ -6,6 +6,8 @@ require 'cloudenvoy/config'
 require 'cloudenvoy/authentication_error'
 
 require 'cloudenvoy/authenticator'
+require 'cloudenvoy/pub_sub_client'
+require 'cloudenvoy/publisher'
 
 # Define and manage Cloud Pub/Sub publishers and subscribers
 module Cloudenvoy

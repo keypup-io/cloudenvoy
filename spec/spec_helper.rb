@@ -12,6 +12,10 @@ require 'rspec/rails'
 # Require main library (after Rails has done so)
 require 'cloudenvoy'
 
+# Require supporting files
+Dir['./spec/support/**/*.rb'].each { |f| require f }
+Dir['./spec/shared/**/*.rb'].each { |f| require f }
+
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'
