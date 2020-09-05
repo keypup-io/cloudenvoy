@@ -37,4 +37,17 @@ module Cloudenvoy
   def self.logger
     config.logger
   end
+
+  #
+  # Publish a message to a topic. Shorthand method to Cloudenvoy::PubSubClient#publish.
+  #
+  # @param [String] topic The name of the topic
+  # @param [Hash, String] payload The message content.
+  # @param [Hash] attrs The message attributes.
+  #
+  # @return [Google::Cloud::PubSub::Message] The created message.
+  #
+  def self.publish(topic, payload, attrs = {})
+    PubSubClient.publish(topic, payload, attrs)
+  end
 end
