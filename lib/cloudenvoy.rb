@@ -4,10 +4,12 @@ require 'cloudenvoy/version'
 require 'cloudenvoy/config'
 
 require 'cloudenvoy/authentication_error'
+require 'cloudenvoy/invalid_subscriber_error'
 
 require 'cloudenvoy/authenticator'
 require 'cloudenvoy/pub_sub_client'
 require 'cloudenvoy/publisher'
+require 'cloudenvoy/subscriber'
 
 # Define and manage Cloud Pub/Sub publishers and subscribers
 module Cloudenvoy
@@ -51,3 +53,5 @@ module Cloudenvoy
     PubSubClient.publish(topic, payload, attrs)
   end
 end
+
+require 'cloudenvoy/engine' if defined?(::Rails::Engine)
