@@ -6,7 +6,7 @@ class TestSubscriber
 
   cloudenvoy_options topics: ['some-topic']
 
-  def process(payload, _attributes, _topic, _subscription)
-    @username = payload['username']
+  def process(message)
+    @username = message.payload['username']
   end
 end

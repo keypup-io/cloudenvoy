@@ -4,17 +4,17 @@ RSpec.describe Cloudenvoy::Subscriber do
   let(:subscriber_class) { TestSubscriber }
   let(:msg_id) { '1234' }
   let(:payload) { { 'username' => 'john' } }
-  let(:attributes) { { 'some' => 'attrs' } }
+  let(:metadata) { { 'some' => 'attrs' } }
   let(:topic) { 'foo-topic' }
-  let(:subscription) { "projects/some-proj/subscriptions/some-app.#{subscriber_class.to_s.underscore}.#{topic}" }
-  let(:sub_attrs) { { id: msg_id, payload: payload, attributes: attributes, topic: topic, subscription: subscription } }
-  let(:subscriber) { subscriber_class.new(sub_attrs) }
+  let(:sub_uri) { "projects/some-proj/subscriptions/some-app.#{subscriber_class.to_s.underscore}.#{topic}" }
+  let(:message) { Cloudenvoy::Message.new(id: msg_id, payload: payload, metadata: metadata, sub_uri: sub_uri) }
+  let(:subscriber) { subscriber_class.new(message: message) }
 
-  let(:descriptor_sub) { subscription }
+  let(:descriptor_sub) { sub_uri }
   let(:descriptor) do
     {
       'message' => {
-        'attributes' => attributes,
+        'attributes' => metadata,
         'data' => Base64.strict_encode64(payload.to_json),
         'message_id' => msg_id
       },
@@ -22,8 +22,22 @@ RSpec.describe Cloudenvoy::Subscriber do
     }
   end
 
-  describe '.parse_subscription' do
-    subject { described_class.parse_subscription(subscription) }
+  describe '.from_sub_uri' do
+    subject { described_class.from_sub_uri(sub_uri) }
+
+    context 'with valid subscriber' do
+      it { is_expected.to eq(TestSubscriber) }
+    end
+
+    context 'with invalid subscriber' do
+      let(:subscriber_class) { String }
+
+      it { is_expected.to be_nil }
+    end
+  end
+
+  describe '.parse_sub_uri' do
+    subject { described_class.parse_sub_uri(sub_uri) }
 
     it { is_expected.to eq([subscriber_class.to_s.underscore, topic]) }
   end
@@ -31,9 +45,10 @@ RSpec.describe Cloudenvoy::Subscriber do
   describe '.execute_from_descriptor' do
     subject(:execute) { described_class.execute_from_descriptor(descriptor) }
 
+    let(:ret_msg) { instance_double('Cloudenvoy::Message', subscriber: ret_sub) }
     let(:ret_sub) { subscriber }
 
-    before { expect(described_class).to receive(:from_descriptor).with(descriptor).and_return(ret_sub) }
+    before { expect(Cloudenvoy::Message).to receive(:from_descriptor).with(descriptor).and_return(ret_msg) }
 
     context 'with valid subscriber' do
       let(:resp) { 'some-response' }
@@ -46,21 +61,6 @@ RSpec.describe Cloudenvoy::Subscriber do
       let(:ret_sub) { nil }
 
       it { expect { execute }.to raise_error(Cloudenvoy::InvalidSubscriberError) }
-    end
-  end
-
-  describe '.from_descriptor' do
-    subject { described_class.from_descriptor(descriptor) }
-
-    context 'with invalid subscriber' do
-      let(:descriptor_sub) { 'projects/proj/subscriptions/bar' }
-
-      it { is_expected.to be_nil }
-    end
-
-    context 'with valid descriptor' do
-      it { is_expected.to be_a(TestSubscriber) }
-      it { is_expected.to have_attributes(sub_attrs) }
     end
   end
 
@@ -123,7 +123,7 @@ RSpec.describe Cloudenvoy::Subscriber do
   describe '.new' do
     subject { subscriber }
 
-    it { is_expected.to have_attributes(sub_attrs) }
+    it { is_expected.to have_attributes(message: message) }
   end
 
   describe '#execute' do
@@ -131,15 +131,15 @@ RSpec.describe Cloudenvoy::Subscriber do
 
     let(:resp) { 'some-resp' }
 
-    before { expect(subscriber).to receive(:process).with(payload, attributes, topic, subscription).and_return(resp) }
+    before { expect(subscriber).to receive(:process).with(message).and_return(resp) }
     it { is_expected.to eq(resp) }
   end
 
   describe '#==' do
     subject { subscriber }
 
-    it { is_expected.to eq(TestSubscriber.new(id: subscriber.id)) }
-    it { is_expected.not_to eq(TestSubscriber.new(id: subscriber.id + 'aaa')) }
+    it { is_expected.to eq(TestSubscriber.new(message: message)) }
+    it { is_expected.not_to eq(TestSubscriber.new(message: 'bar')) }
     it { is_expected.not_to eq('foo') }
   end
 end

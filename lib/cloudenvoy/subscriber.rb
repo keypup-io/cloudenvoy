@@ -13,7 +13,7 @@ module Cloudenvoy
   #   cloudenvoy_options topics: ['my-topic']
   #
   #   # Process message objects
-  #   def process(message, topic, attributes)
+  #   def process(message)
   #     ...do something...
   #   end
   # end
@@ -22,10 +22,27 @@ module Cloudenvoy
     # Add class method to including class
     def self.included(base)
       base.extend(ClassMethods)
-      base.attr_accessor :id, :payload, :attributes, :topic, :subscription
+      base.attr_accessor :message
 
       # Register subscriber
       Cloudenvoy.subscribers.add(base)
+    end
+
+    #
+    # Return the subscriber class for the provided
+    # class name.
+    #
+    # @param [String] sub_uri The subscription uri.
+    #
+    # @return [Class] The subscriber class
+    #
+    def self.from_sub_uri(sub_uri)
+      klass_name = Subscriber.parse_sub_uri(sub_uri)[0]
+
+      # Check that subscriber class is a valid subscriber
+      sub_klass = Object.const_get(klass_name.camelize)
+
+      sub_klass.include?(self) ? sub_klass : nil
     end
 
     #
@@ -35,7 +52,7 @@ module Cloudenvoy
     #
     # @return [Array<String,String>] A tuple [subscriber_name, topic ]
     #
-    def self.parse_subscription(sub_uri)
+    def self.parse_sub_uri(sub_uri)
       sub_uri.split('/').last.split('.').last(2)
     end
 
@@ -49,42 +66,9 @@ module Cloudenvoy
     # @return [Any] The subscriber processing return value.
     #
     def self.execute_from_descriptor(input_payload)
-      subscriber = from_descriptor(input_payload) || raise(InvalidSubscriberError)
+      message = Message.from_descriptor(input_payload)
+      subscriber = message.subscriber || raise(InvalidSubscriberError)
       subscriber.execute
-    end
-
-    #
-    # Return an instantiated subscriber from a Pub/Sub webhook
-    # payload.
-    #
-    # @param [Hash] input_payload The Pub/Sub webhook hash describing
-    # the message to process.
-    #
-    # @return [Cloudenvoy::Subscriber] The instantiated subscriber
-    #
-    def self.from_descriptor(input_payload)
-      subscription = input_payload['subscription']
-      sub_klass_name, topic = parse_subscription(subscription)
-
-      # Check that subscriber class is a valid subscriber
-      sub_klass = Object.const_get(sub_klass_name.camelize)
-      return nil unless sub_klass.include?(self)
-
-      # Extract message content
-      msg_id = input_payload.dig('message', 'message_id')
-      msg_attrs = input_payload.dig('message', 'attributes')
-      msg_data = JSON.parse(Base64.decode64(input_payload.dig('message', 'data')))
-
-      # Return the instantiated subscriber
-      sub_klass.new(
-        id: msg_id,
-        payload: msg_data,
-        attributes: msg_attrs || {},
-        topic: topic,
-        subscription: subscription
-      )
-    rescue NameError
-      nil
     end
 
     # Module class methods
@@ -149,18 +133,10 @@ module Cloudenvoy
     #
     # Build a new subscriber instance.
     #
-    # @param [String] id Message ID.
-    # @param [Hash, String] payload Message content.
-    # @param [Hash] attributes Message attributes.
-    # @param [String] topic Source topic.
-    # @param [String] subscription Source subscription.
+    # @param [Cloudenvoy::Message] message The message to process.
     #
-    def initialize(id: nil, payload: nil, attributes: {}, topic: nil, subscription: nil)
-      @id = id
-      @payload = payload
-      @attributes = attributes
-      @topic = topic
-      @subscription = subscription
+    def initialize(message:)
+      @message = message
     end
 
     #
@@ -169,7 +145,7 @@ module Cloudenvoy
     # @return [Any] The logic return value
     #
     def execute
-      process(payload, attributes, topic, subscription)
+      process(message)
     end
 
     #
@@ -180,7 +156,7 @@ module Cloudenvoy
     # @return [Boolean] True if the object is equal.
     #
     def ==(other)
-      other.is_a?(self.class) && other.id == id
+      other.is_a?(self.class) && other.message == message
     end
   end
 end
