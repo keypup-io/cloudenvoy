@@ -3,6 +3,8 @@
 /_yardoc/
 /coverage/
 /doc/
+/examples/rails/log/*.log
+/examples/rails/tmp/
 /pkg/
 /spec/reports/
 /tmp/
