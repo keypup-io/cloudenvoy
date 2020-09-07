@@ -6,7 +6,7 @@ RSpec.describe Cloudenvoy::Subscriber do
   let(:payload) { { 'username' => 'john' } }
   let(:attributes) { { 'some' => 'attrs' } }
   let(:topic) { 'foo-topic' }
-  let(:subscription) { "project/some-proj/some-app/#{topic}/#{subscriber_class.to_s.underscore}" }
+  let(:subscription) { "projects/some-proj/subscriptions/some-app.#{subscriber_class.to_s.underscore}.#{topic}" }
   let(:sub_attrs) { { id: msg_id, payload: payload, attributes: attributes, topic: topic, subscription: subscription } }
   let(:subscriber) { subscriber_class.new(sub_attrs) }
 
@@ -20,6 +20,12 @@ RSpec.describe Cloudenvoy::Subscriber do
       },
       'subscription' => descriptor_sub
     }
+  end
+
+  describe '.parse_subscription' do
+    subject { described_class.parse_subscription(subscription) }
+
+    it { is_expected.to eq([subscriber_class.to_s.underscore, topic]) }
   end
 
   describe '.execute_from_descriptor' do
@@ -47,7 +53,7 @@ RSpec.describe Cloudenvoy::Subscriber do
     subject { described_class.from_descriptor(descriptor) }
 
     context 'with invalid subscriber' do
-      let(:descriptor_sub) { 'projects/proj/foo/bar' }
+      let(:descriptor_sub) { 'projects/proj/subscriptions/bar' }
 
       it { is_expected.to be_nil }
     end
@@ -56,6 +62,62 @@ RSpec.describe Cloudenvoy::Subscriber do
       it { is_expected.to be_a(TestSubscriber) }
       it { is_expected.to have_attributes(sub_attrs) }
     end
+  end
+
+  describe '.cloudenvoy_options_hash' do
+    subject { subscriber_class.cloudenvoy_options_hash }
+
+    let(:opts) { { foo: 'bar' } }
+    let!(:original_opts) { subscriber_class.cloudenvoy_options_hash }
+
+    before { subscriber_class.cloudenvoy_options(opts) }
+    after { subscriber_class.cloudenvoy_options(original_opts) }
+    it { is_expected.to eq(Hash[opts.map { |k, v| [k.to_sym, v] }]) }
+  end
+
+  describe '.topics' do
+    subject { subscriber_class.topics }
+
+    it { is_expected.to eq(subscriber_class.cloudenvoy_options_hash.fetch(:topics)) }
+  end
+
+  describe '.subscription_name' do
+    subject { subscriber_class.subscription_name(topic) }
+
+    let(:expected) do
+      [
+        Cloudenvoy.config.gcp_sub_prefix.tr('.', '-'),
+        subscriber_class.to_s.underscore,
+        topic
+      ]
+    end
+
+    context 'with regular prefix name' do
+      it { is_expected.to eq(expected) }
+    end
+
+    context 'with dotted prefix' do
+      before { allow(Cloudenvoy.config).to receive(:gcp_sub_prefix).and_return('foo.bar') }
+      it { is_expected.to eq(expected) }
+    end
+  end
+
+  describe '.setup' do
+    subject { subscriber_class.setup }
+
+    let(:topics) { %w[foo bar] }
+    let(:gcp_subs) { Array.new(2) { instance_double('Google::Cloud::PubSub::Subscription') } }
+
+    before do
+      allow(subscriber_class).to receive(:topics).and_return(topics)
+      topics.each_with_index do |t, i|
+        expect(Cloudenvoy::PubSubClient).to receive(:upsert_subscription)
+          .with(t, subscriber_class.subscription_name(t))
+          .and_return(gcp_subs[i])
+      end
+    end
+
+    it { is_expected.to eq(gcp_subs) }
   end
 
   describe '.new' do

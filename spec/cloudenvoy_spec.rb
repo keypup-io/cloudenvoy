@@ -24,4 +24,44 @@ RSpec.describe Cloudenvoy do
     before { expect(Cloudenvoy::PubSubClient).to receive(:publish).with(topic, payload, attrs).and_return(gcp_msg) }
     it { is_expected.to eq(gcp_msg) }
   end
+
+  describe '.publishers' do
+    subject { described_class.publishers }
+
+    it { is_expected.to include(TestPublisher) }
+  end
+
+  describe '.subscribers' do
+    subject { described_class.subscribers }
+
+    it { is_expected.to include(TestSubscriber) }
+  end
+
+  describe '.setup_subscribers' do
+    subject { described_class.setup_subscribers }
+
+    let(:subscriber) { TestSubscriber }
+    let(:subs) { Array.new(2) { instance_double('Google::Cloud::PubSub::Subscription') } }
+
+    before do
+      allow(described_class).to receive(:subscribers).and_return([subscriber])
+      expect(subscriber).to receive(:setup).and_return(subs)
+    end
+
+    it { is_expected.to eq(subs) }
+  end
+
+  describe '.setup_publishers' do
+    subject { described_class.setup_publishers }
+
+    let(:publisher) { TestPublisher }
+    let(:topics) { Array.new(2) { instance_double('Google::Cloud::PubSub::Topic') } }
+
+    before do
+      allow(described_class).to receive(:publishers).and_return([publisher])
+      expect(publisher).to receive(:setup).and_return(topics)
+    end
+
+    it { is_expected.to eq(topics) }
+  end
 end

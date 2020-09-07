@@ -21,7 +21,22 @@ module Cloudenvoy
   module Subscriber
     # Add class method to including class
     def self.included(base)
+      base.extend(ClassMethods)
       base.attr_accessor :id, :payload, :attributes, :topic, :subscription
+
+      # Register subscriber
+      Cloudenvoy.subscribers.add(base)
+    end
+
+    #
+    # Parse the subscription name and return the subscriber name and topic.
+    #
+    # @param [String] sub_uri The subscription URI
+    #
+    # @return [Array<String,String>] A tuple [subscriber_name, topic ]
+    #
+    def self.parse_subscription(sub_uri)
+      sub_uri.split('/').last.split('.').last(2)
     end
 
     #
@@ -49,7 +64,7 @@ module Cloudenvoy
     #
     def self.from_descriptor(input_payload)
       subscription = input_payload['subscription']
-      topic, sub_klass_name = subscription.split('/').last(2)
+      sub_klass_name, topic = parse_subscription(subscription)
 
       # Check that subscriber class is a valid subscriber
       sub_klass = Object.const_get(sub_klass_name.camelize)
@@ -70,6 +85,65 @@ module Cloudenvoy
       )
     rescue NameError
       nil
+    end
+
+    # Module class methods
+    module ClassMethods
+      #
+      # Set the subscriber runtime options.
+      #
+      # @param [Hash] opts The subscriber options.
+      #
+      # @return [Hash] The options set.
+      #
+      def cloudenvoy_options(opts = {})
+        opt_list = opts&.map { |k, v| [k.to_sym, v] } || [] # symbolize
+        @cloudenvoy_options_hash = Hash[opt_list]
+      end
+
+      #
+      # Return the subscriber runtime options.
+      #
+      # @return [Hash] The subscriber runtime options.
+      #
+      def cloudenvoy_options_hash
+        @cloudenvoy_options_hash || {}
+      end
+
+      #
+      # Return the list of topics this subscriber listens
+      # to.
+      #
+      # @return [Array<String>] The list of subscribed topics.
+      #
+      def topics
+        cloudenvoy_options_hash[:topics] || []
+      end
+
+      #
+      # Return the subscription name used by this subscriber
+      # to subscribe to a specific topic.
+      #
+      # @return [String] The subscription name.
+      #
+      def subscription_name(topic)
+        [
+          Cloudenvoy.config.gcp_sub_prefix.tr('.', '-'),
+          to_s.underscore,
+          topic
+        ]
+      end
+
+      #
+      # Create the Subscriber subscription in Pub/Sub.
+      #
+      # @return [Array<Google::Cloud::PubSub::Subscription>] The upserted subscription.
+      #
+      def setup
+        topics.map do |t|
+          PubSubClient.upsert_subscription(t, subscription_name(t))
+        end
+      end
     end
 
     #

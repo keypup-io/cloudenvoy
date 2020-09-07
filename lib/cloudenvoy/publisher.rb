@@ -30,6 +30,9 @@ module Cloudenvoy
     def self.included(base)
       base.extend(ClassMethods)
       base.attr_accessor :msg_args
+
+      # Register subscriber
+      Cloudenvoy.publishers.add(base)
     end
 
     # Module class methods
@@ -62,7 +65,7 @@ module Cloudenvoy
       # @return [String] The default topic.
       #
       def default_topic
-        cloudenvoy_options_hash.fetch(:topic)
+        cloudenvoy_options_hash[:topic]
       end
 
       #
@@ -74,6 +77,17 @@ module Cloudenvoy
       #
       def publish(*args)
         new(msg_args: args).publish
+      end
+
+      #
+      # Setup the default topic for this publisher.
+      #
+      # @return [Google::Cloud::PubSub::Topic] The upserted/topic.
+      #
+      def setup
+        return nil unless default_topic
+
+        PubSubClient.upsert_topic(default_topic)
       end
     end
 

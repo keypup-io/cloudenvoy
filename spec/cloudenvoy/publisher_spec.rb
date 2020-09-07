@@ -33,6 +33,31 @@ RSpec.describe Cloudenvoy::Publisher do
     it { is_expected.to eq(gcp_msg) }
   end
 
+  describe '.setup' do
+    subject { publisher_class.setup }
+
+    let(:gcp_topic) { instance_double('Google::Cloud::PubSub::Topic') }
+
+    context 'with default topic' do
+      before do
+        expect(Cloudenvoy::PubSubClient).to receive(:upsert_topic)
+          .with(publisher_class.default_topic)
+          .and_return(gcp_topic)
+      end
+
+      it { is_expected.to eq(gcp_topic) }
+    end
+
+    context 'with no default topic' do
+      before do
+        allow(publisher_class).to receive(:default_topic).and_return(nil)
+        expect(Cloudenvoy::PubSubClient).not_to receive(:upsert_topic)
+      end
+
+      it { is_expected.to be_nil }
+    end
+  end
+
   describe '.new' do
     subject { publisher }
 

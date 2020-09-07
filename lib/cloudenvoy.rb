@@ -52,6 +52,42 @@ module Cloudenvoy
   def self.publish(topic, payload, attrs = {})
     PubSubClient.publish(topic, payload, attrs)
   end
+
+  #
+  # Return the list of registered publishers.
+  #
+  # @return [Set<Cloudenvoy::Subscriber>] The list of registered publishers.
+  #
+  def self.publishers
+    @publishers ||= Set.new
+  end
+
+  #
+  # Return the list of registered subscribers.
+  #
+  # @return [Set<Cloudenvoy::Subscriber>] The list of registered subscribers.
+  #
+  def self.subscribers
+    @subscribers ||= Set.new
+  end
+
+  #
+  # Create/update subscriptions for all registered subscribers.
+  #
+  # @return [Array<Google::Cloud::PubSub::Subscription>] The upserted subscriptions.
+  #
+  def self.setup_subscribers
+    subscribers.flat_map(&:setup)
+  end
+
+  #
+  # Create/update default topics for all registered publishers.
+  #
+  # @return [Array<Google::Cloud::PubSub::Subscription>] The upserted topics.
+  #
+  def self.setup_publishers
+    publishers.flat_map(&:setup)
+  end
 end
 
 require 'cloudenvoy/engine' if defined?(::Rails::Engine)
