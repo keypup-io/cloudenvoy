@@ -68,6 +68,21 @@ module Cloudenvoy
     end
 
     #
+    # Return a hash description of the message.
+    #
+    # @return [Hash] The message description
+    #
+    def to_h
+      {
+        id: id,
+        payload: payload,
+        metadata: metadata,
+        topic: topic,
+        sub_uri: sub_uri
+      }.compact
+    end
+
+    #
     # Equality operator.
     #
     # @param [Any] other The object to compare.

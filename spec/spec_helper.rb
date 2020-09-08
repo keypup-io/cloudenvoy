@@ -4,7 +4,9 @@ require 'bundler/setup'
 require 'timecop'
 require 'webmock/rspec'
 
-# Configure Rails dummary app
+require 'active_support/logger'
+
+# Configure Rails dummy app
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('dummy/config/environment.rb', __dir__)
 require 'rspec/rails'

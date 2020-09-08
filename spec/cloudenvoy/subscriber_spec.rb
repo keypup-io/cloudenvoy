@@ -126,6 +126,13 @@ RSpec.describe Cloudenvoy::Subscriber do
     it { is_expected.to have_attributes(message: message) }
   end
 
+  describe '#logger' do
+    subject { subscriber.logger }
+
+    it { is_expected.to be_a(Cloudenvoy::SubscriberLogger) }
+    it { is_expected.to have_attributes(loggable: subscriber) }
+  end
+
   describe '#execute' do
     subject { subscriber.execute }
 

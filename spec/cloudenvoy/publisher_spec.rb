@@ -70,10 +70,17 @@ RSpec.describe Cloudenvoy::Publisher do
     it { is_expected.to eq(publisher_class.default_topic) }
   end
 
-  describe '#attributes' do
-    subject { publisher.attributes(*msg_args) }
+  describe '#metadata' do
+    subject { publisher.metadata(*msg_args) }
 
     it { is_expected.to eq({}) }
+  end
+
+  describe '#logger' do
+    subject { publisher.logger }
+
+    it { is_expected.to be_a(Cloudenvoy::PublisherLogger) }
+    it { is_expected.to have_attributes(loggable: publisher) }
   end
 
   describe '#publish' do
@@ -81,16 +88,26 @@ RSpec.describe Cloudenvoy::Publisher do
 
     let(:topic) { 'foo-topic' }
     let(:payload) { { formatted: 'payload' } }
-    let(:attrs) { { some: 'attrs' } }
-    let(:gcp_msg) { instance_double('Google::Cloud::PubSub::Message') }
+    let(:metadata) { { some: 'attrs' } }
+    let(:gcp_msg) { instance_double('Google::Cloud::PubSub::Message', message_id: '1234') }
+
+    let(:ret_message) do
+      Cloudenvoy::Message.new(
+        id: gcp_msg.message_id,
+        topic: topic,
+        payload: payload,
+        metadata: metadata
+      )
+    end
 
     before do
       expect(publisher).to receive(:topic).with(*msg_args).and_return(topic)
       expect(publisher).to receive(:payload).with(*msg_args).and_return(payload)
-      expect(publisher).to receive(:attributes).with(*msg_args).and_return(attrs)
-      expect(Cloudenvoy::PubSubClient).to receive(:publish).with(topic, payload, attrs).and_return(gcp_msg)
+      expect(publisher).to receive(:metadata).with(*msg_args).and_return(metadata)
+      expect(Cloudenvoy::PubSubClient).to receive(:publish).with(topic, payload, metadata).and_return(gcp_msg)
     end
+    after { expect(publisher).to have_attributes(message: ret_message) }
 
-    it { is_expected.to eq(gcp_msg) }
+    it { is_expected.to eq(ret_message) }
   end
 end

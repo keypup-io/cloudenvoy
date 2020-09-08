@@ -40,7 +40,7 @@ RSpec.describe Cloudenvoy::SubscriberController, type: :controller do
       it { is_expected.to have_http_status(:unprocessable_entity) }
     end
 
-    context 'with invalid worker' do
+    context 'with invalid subscriber' do
       before do
         allow(Cloudenvoy::Subscriber).to receive(:execute_from_payload)
           .with(expected_payload)

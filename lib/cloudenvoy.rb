@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'active_support/core_ext/string/inflections'
+
 require 'cloudenvoy/version'
 require 'cloudenvoy/config'
 
@@ -8,6 +10,9 @@ require 'cloudenvoy/invalid_subscriber_error'
 
 require 'cloudenvoy/authenticator'
 require 'cloudenvoy/pub_sub_client'
+require 'cloudenvoy/logger_wrapper'
+require 'cloudenvoy/publisher_logger'
+require 'cloudenvoy/subscriber_logger'
 require 'cloudenvoy/message'
 require 'cloudenvoy/publisher'
 require 'cloudenvoy/subscriber'

@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'activesupport' # TODO: required?
+  spec.add_dependency 'activesupport'
   spec.add_dependency 'google-cloud-pubsub', '~> 2.0'
   spec.add_dependency 'jwt'
   spec.add_dependency 'retriable'

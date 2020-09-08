@@ -140,12 +140,31 @@ module Cloudenvoy
     end
 
     #
+    # Return the Cloudenvoy logger instance.
+    #
+    # @return [Logger, any] The cloudenvoy logger.
+    #
+    def logger
+      @logger ||= SubscriberLogger.new(self)
+    end
+
+    #
     # Execute the subscriber's logic.
     #
     # @return [Any] The logic return value
     #
     def execute
-      process(message)
+      logger.info('Processing message...')
+
+      # Process message
+      resp = process(message)
+
+      # Log completion and return result
+      logger.info('Message processed')
+      resp
+    rescue StandardError => e
+      logger.info('Message processing failed')
+      raise(e)
     end
 
     #

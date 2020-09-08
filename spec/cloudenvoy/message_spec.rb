@@ -80,6 +80,23 @@ RSpec.describe Cloudenvoy::Message do
     end
   end
 
+  describe '#to_h' do
+    subject { message.to_h }
+
+    let(:message) { described_class.new(msg_attrs) }
+    let(:expected) do
+      {
+        id: message.id,
+        payload: message.payload,
+        metadata: message.metadata,
+        topic: message.topic,
+        sub_uri: message.sub_uri
+      }.compact
+    end
+
+    it { is_expected.to eq(expected) }
+  end
+
   describe '#==' do
     subject(:message) { described_class.new(msg_attrs) }
 

@@ -58,7 +58,7 @@ module Cloudenvoy
     end
 
     #
-    # Return the full URL of the processor. Worker payloads will be sent
+    # Return the full URL of the processor. Message payloads will be sent
     # to this URL.
     #
     # @return [String] The processor URL.
@@ -97,8 +97,8 @@ module Cloudenvoy
     end
 
     #
-    # The path on the host when worker payloads will be sent.
-    # Default to `/cloudenvoy/run`
+    # The path on the host when message payloads will be sent.
+    # Default to `/cloudenvoy/receive`
     #
     #
     # @return [String] The processor path

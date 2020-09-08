@@ -23,7 +23,6 @@ module Cloudenvoy
       # 404: Message delivery will be retried
       head :not_found
     rescue StandardError => e
-      puts e
       # 422: Message delivery will be retried
       Cloudenvoy.logger.error(e)
       Cloudenvoy.logger.error(e.backtrace.join("\n"))
@@ -33,10 +32,10 @@ module Cloudenvoy
     private
 
     #
-    # Parse the request body and return the actual job
-    # payload.
+    # Parse the request body and return the actual message
+    # descriptor.
     #
-    # @return [Hash] The job payload
+    # @return [Hash] The descriptor payload
     #
     def msg_descriptor
       @msg_descriptor ||= begin

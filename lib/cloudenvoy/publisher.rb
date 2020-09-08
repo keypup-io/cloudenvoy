@@ -29,7 +29,7 @@ module Cloudenvoy
     # Add class method to including class
     def self.included(base)
       base.extend(ClassMethods)
-      base.attr_accessor :msg_args
+      base.attr_accessor :msg_args, :message
 
       # Register subscriber
       Cloudenvoy.publishers.add(base)
@@ -116,7 +116,7 @@ module Cloudenvoy
     end
 
     #
-    # Publisher can optionally define message attributes.
+    # Publisher can optionally define message attributes (metadata).
     # Message attributes are sent to Pub/Sub and can be used
     # for filtering.
     #
@@ -124,22 +124,46 @@ module Cloudenvoy
     #
     # @return [Hash] The message attributes.
     #
-    def attributes(*_args)
+    def metadata(*_args)
       {}
+    end
+
+    #
+    # Return the Cloudenvoy logger instance.
+    #
+    # @return [Logger, any] The cloudenvoy logger.
+    #
+    def logger
+      @logger ||= PublisherLogger.new(self)
     end
 
     #
     # Send the instantiated Publisher (message) to
     # Pub/Sub.
     #
-    # @return [Google::Cloud::PubSub::Message] The created message.
+    # @return [Cloudenvoy::Message] The created message.
     #
     def publish
-      PubSubClient.publish(
-        topic(*msg_args),
-        payload(*msg_args),
-        attributes(*msg_args)
+      # Build new message
+      self.message = Message.new(
+        topic: topic(*msg_args),
+        metadata: metadata(*msg_args),
+        payload: payload(*msg_args)
       )
+
+      # Publish message to pub/sub
+      ps_msg = PubSubClient.publish(
+        message.topic,
+        message.payload,
+        message.metadata
+      )
+
+      # Capture message id
+      message.id = ps_msg.message_id
+      logger.info('Published message to pub/sub')
+
+      # Return published message
+      message
     end
   end
 end
