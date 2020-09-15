@@ -17,7 +17,7 @@ module Cloudenvoy
     #
     def receive
       # Process msg_descriptor
-      Subscriber.execute_from_payload(msg_descriptor)
+      Subscriber.execute_from_descriptor(msg_descriptor)
       head :no_content
     rescue InvalidSubscriberError
       # 404: Message delivery will be retried

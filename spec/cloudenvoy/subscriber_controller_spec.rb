@@ -24,7 +24,7 @@ RSpec.describe Cloudenvoy::SubscriberController, type: :controller do
 
     context 'with valid subscriber' do
       before do
-        expect(Cloudenvoy::Subscriber).to receive(:execute_from_payload)
+        expect(Cloudenvoy::Subscriber).to receive(:execute_from_descriptor)
           .with(expected_payload)
           .and_return(true)
       end
@@ -33,7 +33,7 @@ RSpec.describe Cloudenvoy::SubscriberController, type: :controller do
 
     context 'with processing errors' do
       before do
-        allow(Cloudenvoy::Subscriber).to receive(:execute_from_payload)
+        allow(Cloudenvoy::Subscriber).to receive(:execute_from_descriptor)
           .with(expected_payload)
           .and_raise(ArgumentError)
       end
@@ -42,7 +42,7 @@ RSpec.describe Cloudenvoy::SubscriberController, type: :controller do
 
     context 'with invalid subscriber' do
       before do
-        allow(Cloudenvoy::Subscriber).to receive(:execute_from_payload)
+        allow(Cloudenvoy::Subscriber).to receive(:execute_from_descriptor)
           .with(expected_payload)
           .and_raise(Cloudenvoy::InvalidSubscriberError)
       end
