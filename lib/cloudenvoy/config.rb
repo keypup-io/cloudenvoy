@@ -8,6 +8,9 @@ module Cloudenvoy
     attr_writer :secret, :gcp_project_id,
                 :gcp_sub_prefix, :processor_path, :logger, :mode
 
+    # Emulator host
+    EMULATOR_HOST = ENV['PUBSUB_EMULATOR_HOST'] || 'localhost:8085'
+
     # Default application path used for processing messages
     DEFAULT_PROCESSOR_PATH = '/cloudenvoy/receive'
 

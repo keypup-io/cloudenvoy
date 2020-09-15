@@ -20,7 +20,10 @@ module Cloudenvoy
     # @return [Google::Cloud::Pub] The low level client instance.
     #
     def self.backend
-      @backend ||= Google::Cloud::PubSub.new(project_id: config.gcp_project_id)
+      @backend ||= Google::Cloud::PubSub.new({
+        project_id: config.gcp_project_id,
+        emulator_host: config.mode == :development ? Cloudenvoy::Config::EMULATOR_HOST : nil
+      }.compact)
     end
 
     #

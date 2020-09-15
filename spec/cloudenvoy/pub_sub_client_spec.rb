@@ -14,8 +14,23 @@ RSpec.describe Cloudenvoy::PubSubClient do
   describe '.backend' do
     subject { described_class.backend }
 
-    before { allow(Google::Cloud::PubSub).to receive(:new).with(project_id: gcp_project_id).and_return(backend) }
-    it { is_expected.to eq(backend) }
+    before do
+      described_class.instance_variable_set('@backend', nil)
+      allow(Google::Cloud::PubSub).to receive(:new).with(expected_attrs).and_return(backend)
+    end
+
+    context 'with development mode' do
+      let(:expected_attrs) { { project_id: gcp_project_id, emulator_host: Cloudenvoy::Config::EMULATOR_HOST } }
+
+      before { allow(Cloudenvoy.config).to receive(:mode).and_return(:development) }
+      it { is_expected.to eq(backend) }
+    end
+
+    context 'with any other mode' do
+      let(:expected_attrs) { { project_id: gcp_project_id } }
+
+      it { is_expected.to eq(backend) }
+    end
   end
 
   describe '.webhook_url' do
