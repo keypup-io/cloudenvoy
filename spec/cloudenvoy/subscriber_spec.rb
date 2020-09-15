@@ -89,7 +89,7 @@ RSpec.describe Cloudenvoy::Subscriber do
         Cloudenvoy.config.gcp_sub_prefix.tr('.', '-'),
         subscriber_class.to_s.underscore,
         topic
-      ]
+      ].join('.')
     end
 
     context 'with regular prefix name' do

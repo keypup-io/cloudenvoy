@@ -115,7 +115,7 @@ module Cloudenvoy
           Cloudenvoy.config.gcp_sub_prefix.tr('.', '-'),
           to_s.underscore,
           topic
-        ]
+        ].join('.')
       end
 
       #
