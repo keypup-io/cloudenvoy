@@ -106,18 +106,18 @@ RSpec.describe Cloudenvoy::Subscriber do
     subject { subscriber_class.setup }
 
     let(:topics) { %w[foo bar] }
-    let(:gcp_subs) { Array.new(2) { instance_double('Google::Cloud::PubSub::Subscription') } }
+    let(:envoy_subs) { Array.new(2) { instance_double('Cloudenvoy::Subscription') } }
 
     before do
       allow(subscriber_class).to receive(:topics).and_return(topics)
       topics.each_with_index do |t, i|
         expect(Cloudenvoy::PubSubClient).to receive(:upsert_subscription)
           .with(t, subscriber_class.subscription_name(t))
-          .and_return(gcp_subs[i])
+          .and_return(envoy_subs[i])
       end
     end
 
-    it { is_expected.to eq(gcp_subs) }
+    it { is_expected.to eq(envoy_subs) }
   end
 
   describe '.new' do

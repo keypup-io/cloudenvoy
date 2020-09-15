@@ -13,6 +13,7 @@ require 'rspec/rails'
 
 # Require main library (after Rails has done so)
 require 'cloudenvoy'
+require 'cloudenvoy/testing'
 
 # Require supporting files
 Dir['./spec/support/**/*.rb'].each { |f| require f }

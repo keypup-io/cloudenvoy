@@ -73,7 +73,7 @@ module Cloudenvoy
       #
       # @param [Any] *args The publisher arguments
       #
-      # @return [Google::Cloud::PubSub::Message] The created message.
+      # @return [Cloudenvoy::Message] The created message.
       #
       def publish(*args)
         new(msg_args: args).publish
@@ -82,7 +82,7 @@ module Cloudenvoy
       #
       # Setup the default topic for this publisher.
       #
-      # @return [Google::Cloud::PubSub::Topic] The upserted/topic.
+      # @return [Cloudenvoy::Topic] The upserted/topic.
       #
       def setup
         return nil unless default_topic
@@ -179,20 +179,13 @@ module Cloudenvoy
     # @return [Cloudenvoy::Message] The published message
     #
     def publish_message
-      # Build new message
-      self.message = Message.new(
-        topic: topic(*msg_args),
-        metadata: metadata(*msg_args),
-        payload: payload(*msg_args)
+      # Publish message to pub/sub and attach created
+      # message to publisher
+      self.message = PubSubClient.publish(
+        topic(*msg_args),
+        payload(*msg_args),
+        metadata(*msg_args)
       )
-
-      # Publish message to pub/sub
-      ps_msg = PubSubClient.publish(
-        message.topic,
-        message.payload,
-        message.metadata
-      )
-      message.tap { |e| e.id = ps_msg.message_id }
     end
 
     #

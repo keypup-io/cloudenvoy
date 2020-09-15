@@ -10,6 +10,8 @@ require 'cloudenvoy/invalid_subscriber_error'
 
 require 'cloudenvoy/middleware/chain'
 require 'cloudenvoy/authenticator'
+require 'cloudenvoy/topic'
+require 'cloudenvoy/subscription'
 require 'cloudenvoy/pub_sub_client'
 require 'cloudenvoy/logger_wrapper'
 require 'cloudenvoy/publisher_logger'
@@ -54,7 +56,7 @@ module Cloudenvoy
   # @param [Hash, String] payload The message content.
   # @param [Hash] attrs The message attributes.
   #
-  # @return [Google::Cloud::PubSub::Message] The created message.
+  # @return [Cloudenvoy::Message] The created message.
   #
   def self.publish(topic, payload, attrs = {})
     PubSubClient.publish(topic, payload, attrs)
@@ -81,7 +83,7 @@ module Cloudenvoy
   #
   # Create/update subscriptions for all registered subscribers.
   #
-  # @return [Array<Google::Cloud::PubSub::Subscription>] The upserted subscriptions.
+  # @return [Array<Cloudenvoy::Subscription>] The upserted subscriptions.
   #
   def self.setup_subscribers
     subscribers.flat_map(&:setup)
@@ -90,7 +92,7 @@ module Cloudenvoy
   #
   # Create/update default topics for all registered publishers.
   #
-  # @return [Array<Google::Cloud::PubSub::Subscription>] The upserted topics.
+  # @return [Array<Cloudenvoy::Subscription>] The upserted topics.
   #
   def self.setup_publishers
     publishers.flat_map(&:setup)

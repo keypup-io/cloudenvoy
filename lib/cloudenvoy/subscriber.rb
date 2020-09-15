@@ -121,7 +121,7 @@ module Cloudenvoy
       #
       # Create the Subscriber subscription in Pub/Sub.
       #
-      # @return [Array<Google::Cloud::PubSub::Subscription>] The upserted subscription.
+      # @return [Array<Cloudenvoy::Subscription>] The upserted subscription.
       #
       def setup
         topics.map do |t|

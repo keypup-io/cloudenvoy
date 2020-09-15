@@ -26,26 +26,26 @@ RSpec.describe Cloudenvoy::Publisher do
     subject { publisher_class.publish(*msg_args) }
 
     let(:publisher) { instance_double('TestPublisher') }
-    let(:gcp_msg) { instance_double('Google::Cloud::PubSub::Message') }
+    let(:msg) { instance_double('Cloudenvoy::Message') }
 
     before { expect(publisher_class).to receive(:new).with(msg_args: msg_args).and_return(publisher) }
-    before { expect(publisher).to receive(:publish).and_return(gcp_msg) }
-    it { is_expected.to eq(gcp_msg) }
+    before { expect(publisher).to receive(:publish).and_return(msg) }
+    it { is_expected.to eq(msg) }
   end
 
   describe '.setup' do
     subject { publisher_class.setup }
 
-    let(:gcp_topic) { instance_double('Google::Cloud::PubSub::Topic') }
+    let(:envoy_topic) { instance_double('Cloudenvoy::Topic') }
 
     context 'with default topic' do
       before do
         expect(Cloudenvoy::PubSubClient).to receive(:upsert_topic)
           .with(publisher_class.default_topic)
-          .and_return(gcp_topic)
+          .and_return(envoy_topic)
       end
 
-      it { is_expected.to eq(gcp_topic) }
+      it { is_expected.to eq(envoy_topic) }
     end
 
     context 'with no default topic' do
@@ -118,11 +118,9 @@ RSpec.describe Cloudenvoy::Publisher do
     let(:topic) { 'foo-topic' }
     let(:payload) { { formatted: 'payload' } }
     let(:metadata) { { some: 'attrs' } }
-    let(:gcp_msg) { instance_double('Google::Cloud::PubSub::Message', message_id: '1234') }
-
     let(:ret_message) do
       Cloudenvoy::Message.new(
-        id: gcp_msg.message_id,
+        id: '123',
         topic: topic,
         payload: payload,
         metadata: metadata
@@ -133,7 +131,7 @@ RSpec.describe Cloudenvoy::Publisher do
       expect(publisher).to receive(:topic).with(*msg_args).and_return(topic)
       expect(publisher).to receive(:payload).with(*msg_args).and_return(payload)
       expect(publisher).to receive(:metadata).with(*msg_args).and_return(metadata)
-      allow(Cloudenvoy::PubSubClient).to receive(:publish).with(topic, payload, metadata).and_return(gcp_msg)
+      allow(Cloudenvoy::PubSubClient).to receive(:publish).with(topic, payload, metadata).and_return(ret_message)
     end
 
     context 'with successful publish' do
