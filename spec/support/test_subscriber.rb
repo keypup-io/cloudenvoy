@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class TestSubscriber
-  attr_accessor :username
   include Cloudenvoy::Subscriber
+  attr_accessor :username, :middleware_called, :middleware_opts
 
   cloudenvoy_options topics: ['some-topic']
 

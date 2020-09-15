@@ -83,8 +83,37 @@ RSpec.describe Cloudenvoy::Publisher do
     it { is_expected.to have_attributes(loggable: publisher) }
   end
 
+  describe '#publishing_duration' do
+    subject { publisher.publishing_duration }
+
+    let(:now) { Time.now }
+    let(:publishing_started_at) { now - 10.0005 }
+    let(:publishing_ended_at) { now }
+
+    before do
+      publisher.publishing_started_at = publishing_started_at
+      publisher.publishing_ended_at = publishing_ended_at
+    end
+
+    context 'with timestamps set' do
+      it { is_expected.to eq((publishing_ended_at - publishing_started_at).ceil(3)) }
+    end
+
+    context 'with no publishing_started_at' do
+      let(:publishing_started_at) { nil }
+
+      it { is_expected.to eq(0.0) }
+    end
+
+    context 'with no publishing_ended_at' do
+      let(:publishing_ended_at) { nil }
+
+      it { is_expected.to eq(0.0) }
+    end
+  end
+
   describe '#publish' do
-    subject { publisher.publish }
+    subject(:publish) { publisher.publish }
 
     let(:topic) { 'foo-topic' }
     let(:payload) { { formatted: 'payload' } }
@@ -104,10 +133,26 @@ RSpec.describe Cloudenvoy::Publisher do
       expect(publisher).to receive(:topic).with(*msg_args).and_return(topic)
       expect(publisher).to receive(:payload).with(*msg_args).and_return(payload)
       expect(publisher).to receive(:metadata).with(*msg_args).and_return(metadata)
-      expect(Cloudenvoy::PubSubClient).to receive(:publish).with(topic, payload, metadata).and_return(gcp_msg)
+      allow(Cloudenvoy::PubSubClient).to receive(:publish).with(topic, payload, metadata).and_return(gcp_msg)
     end
-    after { expect(publisher).to have_attributes(message: ret_message) }
 
-    it { is_expected.to eq(ret_message) }
+    context 'with successful publish' do
+      after { expect(publisher).to have_attributes(message: ret_message) }
+      it { is_expected.to eq(ret_message) }
+    end
+
+    context 'with server middleware chain' do
+      before { Cloudenvoy.config.publisher_middleware.add(TestMiddleware) }
+      after { expect(publisher.middleware_called).to be_truthy }
+      it { is_expected.to eq(ret_message) }
+    end
+
+    context 'with runtime error' do
+      let(:error) { StandardError.new('some-message') }
+
+      before { allow(Cloudenvoy::PubSubClient).to receive(:publish).and_raise(error) }
+      before { expect(publisher).to receive(:on_error).with(error) }
+      it { expect { publish }.to raise_error(error) }
+    end
   end
 end

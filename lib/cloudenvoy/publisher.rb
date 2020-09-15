@@ -29,7 +29,7 @@ module Cloudenvoy
     # Add class method to including class
     def self.included(base)
       base.extend(ClassMethods)
-      base.attr_accessor :msg_args, :message
+      base.attr_accessor :msg_args, :message, :publishing_started_at, :publishing_ended_at
 
       # Register subscriber
       Cloudenvoy.publishers.add(base)
@@ -138,12 +138,47 @@ module Cloudenvoy
     end
 
     #
+    # Return the time taken (in seconds) to format and publish the message. This duration
+    # includes the middlewares and the actual publish method.
+    #
+    # @return [Float] The time taken in seconds as a floating point number.
+    #
+    def publishing_duration
+      return 0.0 unless publishing_ended_at && publishing_started_at
+
+      (publishing_ended_at - publishing_started_at).ceil(3)
+    end
+
+    #
     # Send the instantiated Publisher (message) to
     # Pub/Sub.
     #
     # @return [Cloudenvoy::Message] The created message.
     #
     def publish
+      # Format and publish message
+      resp = execute_middleware_chain
+
+      # Log job completion and return result
+      logger.info("Published message in #{publishing_duration}s") { { duration: publishing_duration } }
+      resp
+    rescue StandardError => e
+      logger.info("Publishing failed after #{publishing_duration}s") { { duration: publishing_duration } }
+      raise(e)
+    end
+
+    #=============================
+    # Private
+    #=============================
+    private
+
+    #
+    # Internal logic used to build, publish and capture message on the
+    # publisher.
+    #
+    # @return [Cloudenvoy::Message] The published message
+    #
+    def publish_message
       # Build new message
       self.message = Message.new(
         topic: topic(*msg_args),
@@ -157,13 +192,27 @@ module Cloudenvoy
         message.payload,
         message.metadata
       )
+      message.tap { |e| e.id = ps_msg.message_id }
+    end
 
-      # Capture message id
-      message.id = ps_msg.message_id
-      logger.info('Published message to pub/sub')
+    #
+    # Execute the subscriber process method through the middleware chain.
+    #
+    # @return [Any] The result of the perform method.
+    #
+    def execute_middleware_chain
+      self.publishing_started_at = Time.now
 
-      # Return published message
-      message
+      Cloudenvoy.config.publisher_middleware.invoke(self) do
+        begin
+          publish_message
+        rescue StandardError => e
+          try(:on_error, e)
+          return raise(e)
+        end
+      end
+    ensure
+      self.publishing_ended_at = Time.now
     end
   end
 end

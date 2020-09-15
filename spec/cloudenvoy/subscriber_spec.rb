@@ -133,13 +133,60 @@ RSpec.describe Cloudenvoy::Subscriber do
     it { is_expected.to have_attributes(loggable: subscriber) }
   end
 
+  describe '#process_duration' do
+    subject { subscriber.process_duration }
+
+    let(:now) { Time.now }
+    let(:process_started_at) { now - 10.0005 }
+    let(:process_ended_at) { now }
+
+    before do
+      subscriber.process_started_at = process_started_at
+      subscriber.process_ended_at = process_ended_at
+    end
+
+    context 'with timestamps set' do
+      it { is_expected.to eq((process_ended_at - process_started_at).ceil(3)) }
+    end
+
+    context 'with no process_started_at' do
+      let(:process_started_at) { nil }
+
+      it { is_expected.to eq(0.0) }
+    end
+
+    context 'with no process_ended_at' do
+      let(:process_ended_at) { nil }
+
+      it { is_expected.to eq(0.0) }
+    end
+  end
+
   describe '#execute' do
-    subject { subscriber.execute }
+    subject(:execute) { subscriber.execute }
 
-    let(:resp) { 'some-resp' }
+    let(:args) { [1, 2] }
+    let(:resp) { 'some-result' }
 
-    before { expect(subscriber).to receive(:process).with(message).and_return(resp) }
+    before { allow(subscriber).to receive(:process).with(message).and_return(resp) }
+    before { expect(subscriber).to have_attributes(process_started_at: nil, process_ended_at: nil) }
+    after { expect(subscriber).to have_attributes(process_started_at: be_a(Time), process_ended_at: be_a(Time)) }
+
     it { is_expected.to eq(resp) }
+
+    context 'with server middleware chain' do
+      before { Cloudenvoy.config.subscriber_middleware.add(TestMiddleware) }
+      after { expect(subscriber.middleware_called).to be_truthy }
+      it { is_expected.to eq(resp) }
+    end
+
+    context 'with runtime error' do
+      let(:error) { StandardError.new('some-message') }
+
+      before { allow(subscriber).to receive(:process).and_raise(error) }
+      before { expect(subscriber).to receive(:on_error).with(error) }
+      it { expect { execute }.to raise_error(error) }
+    end
   end
 
   describe '#==' do

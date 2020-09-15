@@ -2,6 +2,7 @@
 
 class TestPublisher
   include Cloudenvoy::Publisher
+  attr_accessor :middleware_called
 
   cloudenvoy_options topic: 'some-topic'
 

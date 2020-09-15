@@ -22,7 +22,7 @@ module Cloudenvoy
     # Add class method to including class
     def self.included(base)
       base.extend(ClassMethods)
-      base.attr_accessor :message
+      base.attr_accessor :message, :process_started_at, :process_ended_at
 
       # Register subscriber
       Cloudenvoy.subscribers.add(base)
@@ -149,6 +149,18 @@ module Cloudenvoy
     end
 
     #
+    # Return the time taken (in seconds) to process the message. This duration
+    # includes the middlewares and the actual process method.
+    #
+    # @return [Float] The time taken in seconds as a floating point number.
+    #
+    def process_duration
+      return 0.0 unless process_ended_at && process_started_at
+
+      (process_ended_at - process_started_at).ceil(3)
+    end
+
+    #
     # Execute the subscriber's logic.
     #
     # @return [Any] The logic return value
@@ -157,13 +169,13 @@ module Cloudenvoy
       logger.info('Processing message...')
 
       # Process message
-      resp = process(message)
+      resp = execute_middleware_chain
 
-      # Log completion and return result
-      logger.info('Message processed')
+      # Log processing completion and return result
+      logger.info("Processing done after #{process_duration}s") { { duration: process_duration } }
       resp
     rescue StandardError => e
-      logger.info('Message processing failed')
+      logger.info("Processing failed after #{process_duration}s") { { duration: process_duration } }
       raise(e)
     end
 
@@ -176,6 +188,31 @@ module Cloudenvoy
     #
     def ==(other)
       other.is_a?(self.class) && other.message == message
+    end
+
+    #=============================
+    # Private
+    #=============================
+    private
+
+    #
+    # Execute the subscriber process method through the middleware chain.
+    #
+    # @return [Any] The result of the perform method.
+    #
+    def execute_middleware_chain
+      self.process_started_at = Time.now
+
+      Cloudenvoy.config.subscriber_middleware.invoke(self) do
+        begin
+          process(message)
+        rescue StandardError => e
+          try(:on_error, e)
+          return raise(e)
+        end
+      end
+    ensure
+      self.process_ended_at = Time.now
     end
   end
 end

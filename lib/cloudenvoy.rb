@@ -8,6 +8,7 @@ require 'cloudenvoy/config'
 require 'cloudenvoy/authentication_error'
 require 'cloudenvoy/invalid_subscriber_error'
 
+require 'cloudenvoy/middleware/chain'
 require 'cloudenvoy/authenticator'
 require 'cloudenvoy/pub_sub_client'
 require 'cloudenvoy/logger_wrapper'

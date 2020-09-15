@@ -138,25 +138,25 @@ module Cloudenvoy
     end
 
     #
-    # Return the chain of client middlewares.
+    # Return the chain of publisher middlewares.
     #
     # @return [Cloudenvoy::Middleware::Chain] The chain of middlewares.
     #
-    # def client_middleware
-    #   @client_middleware ||= Middleware::Chain.new
-    #   yield @client_middleware if block_given?
-    #   @client_middleware
-    # end
+    def publisher_middleware
+      @publisher_middleware ||= Middleware::Chain.new
+      yield @publisher_middleware if block_given?
+      @publisher_middleware
+    end
 
     #
-    # Return the chain of server middlewares.
+    # Return the chain of subscriber middlewares.
     #
     # @return [Cloudenvoy::Middleware::Chain] The chain of middlewares.
     #
-    # def server_middleware
-    #   @server_middleware ||= Middleware::Chain.new
-    #   yield @server_middleware if block_given?
-    #   @server_middleware
-    # end
+    def subscriber_middleware
+      @subscriber_middleware ||= Middleware::Chain.new
+      yield @subscriber_middleware if block_given?
+      @subscriber_middleware
+    end
   end
 end
