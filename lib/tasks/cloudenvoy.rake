@@ -5,6 +5,12 @@ require 'cloudenvoy'
 ENV['GOOGLE_AUTH_SUPPRESS_CREDENTIALS_WARNINGS'] ||= 'true'
 
 namespace :cloudenvoy do
+  desc 'Setup publishers and subscribers.'
+  task setup: :environment do
+    Rake::Task['cloudenvoy:setup_publishers'].invoke
+    Rake::Task['cloudenvoy:setup_subscribers'].invoke
+  end
+
   desc 'Create required subscriptions for all subcribers.'
   task setup_subscribers: :environment do
     # Force registration of subscribers
