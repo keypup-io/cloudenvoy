@@ -71,5 +71,36 @@ module Cloudenvoy
     def in_memory?
       !enabled?
     end
+
+    #
+    # Clear all messages across all topics.
+    #
+    # @param [String] name The topic to clear.
+    #
+    def clear_all
+      Cloudenvoy::Backend::MemoryPubSub.clear_all
+    end
+
+    #
+    # Clear all messages in a specific topic.
+    #
+    # @param [String] name The topic to clear.
+    #
+    # @return [Array] The cleared array.
+    #
+    def clear(topic)
+      Cloudenvoy::Backend::MemoryPubSub.clear(topic)
+    end
+
+    #
+    # Return the message queue for a specific topic.
+    #
+    # @param [String] name The topic to retrieve.
+    #
+    # @return [Array] The list of messages for the provided topic
+    #
+    def queue(topic)
+      Cloudenvoy::Backend::MemoryPubSub.queue(topic)
+    end
   end
 end

@@ -25,4 +25,33 @@ RSpec.describe Cloudenvoy::Testing do
       it { is_expected.to match([be_a(Cloudenvoy:: Message)]) }
     end
   end
+
+  describe '.clear_all' do
+    subject { described_class.clear_all }
+
+    let(:ret) { instance_double('Array') }
+
+    before { expect(Cloudenvoy::Backend::MemoryPubSub).to receive(:clear_all).and_return(ret) }
+    it { is_expected.to eq(ret) }
+  end
+
+  describe '.clear' do
+    subject { described_class.clear(topic) }
+
+    let(:topic) { 'foo' }
+    let(:ret) { instance_double('Array') }
+
+    before { expect(Cloudenvoy::Backend::MemoryPubSub).to receive(:clear).with(topic).and_return(ret) }
+    it { is_expected.to eq(ret) }
+  end
+
+  describe '.queue' do
+    subject { described_class.queue(topic) }
+
+    let(:topic) { 'foo' }
+    let(:ret) { instance_double('Array') }
+
+    before { expect(Cloudenvoy::Backend::MemoryPubSub).to receive(:queue).with(topic).and_return(ret) }
+    it { is_expected.to eq(ret) }
+  end
 end
