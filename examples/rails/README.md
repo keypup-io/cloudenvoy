@@ -3,12 +3,15 @@
 ## Run using the local gcloud Pub/Sub emulator
 
 1. Install dependencies: `bundle install`
-2. Launch the server: `foreman start`
-3. Open a Rails console: `rails c`
-4. Publish messages:
+2. Intall the Pub/Sub emulator: `gcloud components install pubsub-emulator && gcloud components update`
+3. Run the Pub/Sub emulator: `gcloud beta emulators pubsub start`
+4. Launch the server: `foreman start`
+5. Open a Rails console: `rails c`
+6. Publish messages:
 ```ruby
-DummyPublisher.publish({ foo: 'bar' })
+HelloPublisher.publish('Some message')
 ```
+7. Tail the logs to see how message get processed by `HelloSubscriber`
 
 ## Run using GCP Pub/Sub
 
@@ -23,5 +26,6 @@ DummyPublisher.publish({ foo: 'bar' })
 6. Open a Rails console: `rails c`
 7. Publish messages
 ```ruby
-DummyWorker.perform_async
+HelloPublisher.publish('Some message')
 ```
+8. Tail the logs to see how message get processed by `HelloSubscriber`
