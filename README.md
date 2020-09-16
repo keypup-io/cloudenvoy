@@ -17,7 +17,7 @@ Cloudenvoy works with the local pub/sub emulator as well, meaning that you can w
 1. [Installation](#installation)
 2. [Get started with Rails](#get-started-with-rails)
 3. [Configuring Cloudenvoy](#configuring-cloudenvoy)
-    1. [Pub/Sub authentication & permissions](#pub-sub-authentication--permissions)
+    1. [Pub/Sub authentication & permissions](#pubsub-authentication--permissions)
     2. [Cloudenvoy initializer](#cloudenvoy-initializer)
 4. [Creating topics and subscriptions](#creating-topics-and-subscriptions)
     1. [Sending messages](#sending-messages)
