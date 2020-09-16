@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Arnaud Lachaume']
   spec.email         = ['arnaud.lachaume@keypup.io']
 
-  spec.summary       = 'Cross-application messaging using GCP Pub/Sub (in development)'
-  spec.description   = 'Cross-application messaging using GCP Pub/Sub (in development)'
+  spec.summary       = 'Cross-application messaging using GCP Pub/Sub (alpha)'
+  spec.description   = 'Cross-application messaging using GCP Pub/Sub (alpha)'
   spec.homepage      = 'https://github.com/keypup-io/cloudenvoy'
   spec.license       = 'MIT'
   spec.required_ruby_version = Gem::Requirement.new('>= 2.3.0')
