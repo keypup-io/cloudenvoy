@@ -1,12 +1,14 @@
 ![Build Status](https://github.com/keypup-io/cloudenvoy/workflows/Test/badge.svg) [![Gem Version](https://badge.fury.io/rb/cloudenvoy.svg)](https://badge.fury.io/rb/cloudenvoy)
 
+**Note**: this gem is currently in alpha stage and has not been tested in production yet.
+
 # Cloudenvoy
 
 Cross-application messaging framework for GCP Pub/Sub.
 
 Cloudenvoy provides an easy to use interface to GCP Pub/Sub. Using Cloudenvoy you can simplify cross-application event messaging by using a publish/subscribe approach. Pub/Sub is particularly suited for micro-service architectures where a great number of components need to be aware of other components' activities. In these architectures using point to point communication via API can quickly become messy and hard to maintain due to the number of interconnections to maintain.
 
-Pub/Sub solves that event distribution problem by allowing define to define topics, publishers and subscribers to distribute and process your messages. Cloudenvoy furthers simplify the process of setting up Pub/Sub by giving developers an object-oriented way of managing publishers and subscribers.
+Pub/Sub solves that event distribution problem by allowing developers to define topics, publishers and subscribers to distribute and process event messages. Cloudenvoy furthers simplifies the process of setting up Pub/Sub by giving developers an object-oriented way of managing publishers and subscribers.
 
 Cloudenvoy works with the local pub/sub emulator as well, meaning that you can work offline without access to GCP.
 
@@ -238,7 +240,7 @@ bundle exec rake cloudenvoy:setup_publishers
 bundle exec rake cloudenvoy:setup_subscribers
 ```
 
-For non-rails applications you can run the following in a console to setup your subscribers and publishers:
+For non-rails applications you can run the following in a console to setup your publishers and subscribers:
 ```ruby
 DummyPublisher.setup
 DummySubscriber.setup
@@ -255,7 +257,7 @@ Cloudenvoy.publish('my-topic', { 'some' => 'payload' }, { 'optional' => 'message
 
 This helper is useful for sending basic messages however it is not the preferred way of sending messages as you will quickly clutter your application with message formatting logic over time.
 
-Cloudenvoy provides an object-oriented way of sending messages allowing developers to separate their core business logic from the message formatting logic. These are called `Publishers`.
+Cloudenvoy provides an object-oriented way of sending messages allowing developers to separate their core business logic from any kind of message formatting logic. These are called `Publishers`.
 
 The example below shows you how to publish new users to a topic using Cloudenvoy publishers:
 ```ruby
