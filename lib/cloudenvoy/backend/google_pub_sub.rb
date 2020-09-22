@@ -68,21 +68,42 @@ module Cloudenvoy
       #
       # @param [String] topic The name of the topic
       # @param [String] name The name of the subscription
+      # @param [Hash] opts The subscription configuration options
+      # @option opts [Integer] :deadline The maximum number of seconds after a subscriber receives a message
+      #   before the subscriber should acknowledge the message.
+      # @option opts [Boolean] :retain_acked Indicates whether to retain acknowledged messages. If true,
+      #   then messages are not expunged from the subscription's backlog, even if they are acknowledged,
+      #   until they fall out of the retention window. Default is false.
+      # @option opts [<Type>] :retention How long to retain unacknowledged messages in the subscription's
+      #   backlog, from the moment a message is published. If retain_acked is true, then this also configures
+      #   the retention of acknowledged messages, and thus configures how far back in time a Subscription#seek
+      #   can be done. Cannot be more than 604,800 seconds (7 days) or less than 600 seconds (10 minutes).
+      #   Default is 604,800 seconds (7 days).
+      # @option opts [String] :filter An expression written in the Cloud Pub/Sub filter language.
+      #   If non-empty, then only Message instances whose attributes field matches the filter are delivered
+      #   on this subscription. If empty, then no messages are filtered out. Optional.
       #
       # @return [Cloudenvoy::Subscription] The upserted subscription.
       #
-      def upsert_subscription(topic, name)
-        ps_sub = begin
-          # Retrieve the topic
-          ps_topic = backend.topic(topic, skip_lookup: true)
+      def upsert_subscription(topic, name, opts = {})
+        sub_config = opts.to_h.merge(endpoint: webhook_url)
 
-          # Attempt to create the subscription
-          ps_topic.subscribe(name, endpoint: webhook_url)
-                 rescue Google::Cloud::AlreadyExistsError
-                   # Update endpoint on subscription
-                   # Topic is not updated as it is name-dependent
-                   backend.subscription(name).tap { |e| e.endpoint = webhook_url }
-        end
+        ps_sub =
+          begin
+            # Retrieve the topic
+            ps_topic = backend.topic(topic, skip_lookup: true)
+
+            # Attempt to create the subscription
+            ps_topic.subscribe(name, sub_config)
+          rescue Google::Cloud::AlreadyExistsError
+            # Update endpoint on subscription
+            # Topic is not updated as it is name-dependent
+            backend.subscription(name).tap do |e|
+              sub_config.each do |k, v|
+                e.send("#{k}=", v)
+              end
+            end
+          end
 
         # Return formatted subscription
         Subscription.new(name: ps_sub.name, original: ps_sub)

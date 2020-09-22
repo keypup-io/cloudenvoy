@@ -32,14 +32,15 @@ RSpec.describe Cloudenvoy::PubSubClient do
   end
 
   describe '.upsert_subscription' do
-    subject { described_class.upsert_subscription(topic, sub_name) }
+    subject { described_class.upsert_subscription(topic, sub_name, opts) }
 
     let(:topic) { 'some-topic' }
     let(:sub_name) { 'some.name' }
+    let(:opts) { { foo: 'bar' } }
     let(:envoy_sub) { instance_double('Cloudenvoy::Subscription') }
 
     before { allow(described_class).to receive(:backend).and_return(backend) }
-    before { expect(backend).to receive(:upsert_subscription).with(topic, sub_name).and_return(envoy_sub) }
+    before { expect(backend).to receive(:upsert_subscription).with(topic, sub_name, opts).and_return(envoy_sub) }
     it { is_expected.to eq(envoy_sub) }
   end
 

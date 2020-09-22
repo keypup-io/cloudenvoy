@@ -71,12 +71,14 @@ RSpec.describe Cloudenvoy::Backend::GooglePubSub do
   end
 
   describe '.upsert_subscription' do
-    subject { described_class.upsert_subscription(topic, sub_name) }
+    subject { described_class.upsert_subscription(topic, sub_name, opts) }
 
     let(:topic) { 'some-topic' }
     let(:sub_name) { 'some.name' }
+    let(:opts) { { retain_acked: true } }
     let(:webhook_url) { "#{described_class.config.processor_url}?token=123" }
     let(:gcp_sub) { instance_double('Google::Cloud::PubSub::Subscription', name: 'some.sub') }
+    let(:sub_opts) { opts.merge(endpoint: webhook_url) }
     let(:expected_sub) do
       {
         class: Cloudenvoy::Subscription,
@@ -92,17 +94,23 @@ RSpec.describe Cloudenvoy::Backend::GooglePubSub do
     end
 
     context 'with non-existing subscription' do
-      before { expect(gcp_topic).to receive(:subscribe).with(sub_name, endpoint: webhook_url).and_return(gcp_sub) }
+      before do
+        expect(gcp_topic).to receive(:subscribe)
+          .with(sub_name, opts.merge(endpoint: webhook_url))
+          .and_return(gcp_sub)
+      end
+
       it { is_expected.to have_attributes(expected_sub) }
     end
 
     context 'with existing subscription' do
       before do
         expect(gcp_topic).to receive(:subscribe)
-          .with(sub_name, endpoint: webhook_url)
+          .with(sub_name, sub_opts)
           .and_raise(Google::Cloud::AlreadyExistsError)
         expect(backend).to receive(:subscription).with(sub_name).and_return(gcp_sub)
-        expect(gcp_sub).to receive(:endpoint=).with(webhook_url)
+
+        sub_opts.each { |k, v| expect(gcp_sub).to receive("#{k}=").with(v) }
       end
 
       it { is_expected.to have_attributes(expected_sub) }

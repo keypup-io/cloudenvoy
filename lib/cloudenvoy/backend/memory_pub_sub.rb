@@ -66,10 +66,11 @@ module Cloudenvoy
       #
       # @param [String] topic The name of the topic
       # @param [String] name The name of the subscription
+      # @param [Hash] opts The subscription configuration options
       #
       # @return [Cloudenvoy::Subscription] The upserted subscription.
       #
-      def upsert_subscription(_topic, name)
+      def upsert_subscription(_topic, name, _opts)
         Subscription.new(name: name)
       end
 

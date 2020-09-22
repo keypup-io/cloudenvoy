@@ -78,7 +78,26 @@ RSpec.describe Cloudenvoy::Subscriber do
   describe '.topics' do
     subject { subscriber_class.topics }
 
-    it { is_expected.to eq(subscriber_class.cloudenvoy_options_hash.fetch(:topics)) }
+    let(:topic_list) { ['foo', { name: 'bar', retain_acked: true }] }
+    let(:opts_hash) { { topics: topic_list } }
+    let(:expected_topics) do
+      topic_list.map { |e| e.is_a?(String) ? { name: e } : e }
+    end
+
+    before do
+      subscriber_class.instance_variable_set('@topics', nil)
+      allow(subscriber_class).to receive(:cloudenvoy_options_hash).and_return(opts_hash)
+    end
+
+    context 'with topics' do
+      it { is_expected.to eq(expected_topics) }
+    end
+
+    context 'with topic' do
+      let(:opts_hash) { { topic: topic_list } }
+
+      it { is_expected.to eq(expected_topics) }
+    end
   end
 
   describe '.subscription_name' do
@@ -105,14 +124,14 @@ RSpec.describe Cloudenvoy::Subscriber do
   describe '.setup' do
     subject { subscriber_class.setup }
 
-    let(:topics) { %w[foo bar] }
+    let(:topics) { [{ name: 'foo' }, { name: 'bar', retain_acked: true }] }
     let(:envoy_subs) { Array.new(2) { instance_double('Cloudenvoy::Subscription') } }
 
     before do
       allow(subscriber_class).to receive(:topics).and_return(topics)
       topics.each_with_index do |t, i|
         expect(Cloudenvoy::PubSubClient).to receive(:upsert_subscription)
-          .with(t, subscriber_class.subscription_name(t))
+          .with(t, subscriber_class.subscription_name(t[:name]), t.reject { |k, _| k.to_sym == :name })
           .and_return(envoy_subs[i])
       end
     end

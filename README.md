@@ -357,7 +357,19 @@ class UserSubscriber
   include Cloudenvoy::Subscriber
 
   # Subscribers can subscribe to multiple topics
-  cloudenvoy_options topics: ['system-users']
+  #
+  # You can subscribe to multiple topics:
+  # > cloudenvoy_options topics: ['system-users', 'events']
+  #
+  # You can specify subscription options for each topic
+  # by passing a hash (target: v0.2.0)
+  #
+  # > cloudenvoy_options topics: ['system-users', { name: 'events', retain_acked: true }]
+  #
+  # See the Pub/Sub documentation of the list of available subscription options: 
+  # https://googleapis.dev/ruby/google-cloud-pubsub/latest/Google/Cloud/PubSub/Topic.html#subscribe-instance_method
+  #
+  cloudenvoy_options topic: 'system-users'
 
   # Create the user locally if it does not exist already
   #

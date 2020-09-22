@@ -98,10 +98,12 @@ module Cloudenvoy
       # Return the list of topics this subscriber listens
       # to.
       #
-      # @return [Array<String>] The list of subscribed topics.
+      # @return [Array<Hash>] The list of subscribed topics.
       #
       def topics
-        cloudenvoy_options_hash[:topics] || []
+        @topics ||= (Array(cloudenvoy_options_hash[:topic]) + Array(cloudenvoy_options_hash[:topics])).map do |t|
+          t.is_a?(String) ? { name: t } : t
+        end
       end
 
       #
@@ -125,7 +127,9 @@ module Cloudenvoy
       #
       def setup
         topics.map do |t|
-          PubSubClient.upsert_subscription(t, subscription_name(t))
+          relative_name = t[:name] || t['name']
+          sub_opts = t.reject { |k, _| k.to_sym == :name }
+          PubSubClient.upsert_subscription(t, subscription_name(relative_name), sub_opts)
         end
       end
     end

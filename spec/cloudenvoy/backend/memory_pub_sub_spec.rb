@@ -60,7 +60,7 @@ RSpec.describe Cloudenvoy::Backend::MemoryPubSub do
   end
 
   describe '.upsert_subscription' do
-    subject { described_class.upsert_subscription(topic, name) }
+    subject { described_class.upsert_subscription(topic, name, foo: 'bar') }
 
     let(:topic) { 'foo' }
     let(:name) { 'some.sub.name' }
