@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cloudenvoy (0.2.0)
+    cloudenvoy (0.3.0)
       activesupport
       google-cloud-pubsub (~> 2.0)
       jwt
