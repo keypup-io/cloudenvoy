@@ -3,7 +3,7 @@
 class HelloSubscriber
   include Cloudenvoy::Subscriber
 
-  cloudenvoy_options topics: ['hello-msgs']
+  cloudenvoy_options topic: 'hello-msgs'
 
   #
   # Process a pub/sub message

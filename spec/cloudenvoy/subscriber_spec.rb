@@ -131,7 +131,7 @@ RSpec.describe Cloudenvoy::Subscriber do
       allow(subscriber_class).to receive(:topics).and_return(topics)
       topics.each_with_index do |t, i|
         expect(Cloudenvoy::PubSubClient).to receive(:upsert_subscription)
-          .with(t, subscriber_class.subscription_name(t[:name]), t.reject { |k, _| k.to_sym == :name })
+          .with(t[:name], subscriber_class.subscription_name(t[:name]), t.reject { |k, _| k.to_sym == :name })
           .and_return(envoy_subs[i])
       end
     end
