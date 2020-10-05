@@ -13,6 +13,22 @@ RSpec.describe Cloudenvoy::Backend::GooglePubSub do
     it { is_expected.to eq(Cloudenvoy.config) }
   end
 
+  describe '.development?' do
+    subject { described_class }
+
+    context 'with development mode' do
+      before { allow(described_class.config).to receive(:mode).and_return(:development) }
+
+      it { is_expected.to be_development }
+    end
+
+    context 'with other mode' do
+      before { allow(described_class.config).to receive(:mode).and_return(:production) }
+
+      it { is_expected.not_to be_development }
+    end
+  end
+
   describe '.backend' do
     subject { described_class.backend }
 
@@ -24,7 +40,7 @@ RSpec.describe Cloudenvoy::Backend::GooglePubSub do
     context 'with development mode' do
       let(:expected_attrs) { { project_id: gcp_project_id, emulator_host: Cloudenvoy::Config::EMULATOR_HOST } }
 
-      before { allow(Cloudenvoy.config).to receive(:mode).and_return(:development) }
+      before { allow(described_class).to receive(:development?).and_return(true) }
       it { is_expected.to eq(backend) }
     end
 
@@ -91,6 +107,25 @@ RSpec.describe Cloudenvoy::Backend::GooglePubSub do
       allow(described_class).to receive(:backend).and_return(backend)
       allow(backend).to receive(:topic).with(topic, skip_lookup: true).and_return(gcp_topic)
       allow(described_class).to receive(:webhook_url).and_return(webhook_url)
+      allow(gcp_topic).to receive(:subscribe).and_return(gcp_sub)
+    end
+
+    context 'with development mode' do
+      before do
+        allow(described_class).to receive(:development?).and_return(true)
+        expect(described_class).to receive(:upsert_topic).with(topic)
+      end
+
+      it { is_expected.to be_truthy }
+    end
+
+    context 'with other mode' do
+      before do
+        allow(described_class).to receive(:development?).and_return(false)
+        expect(described_class).not_to receive(:upsert_topic)
+      end
+
+      it { is_expected.to be_truthy }
     end
 
     context 'with non-existing subscription' do

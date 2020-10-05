@@ -18,6 +18,15 @@ module Cloudenvoy
       end
 
       #
+      # Return true if the current config mode is development.
+      #
+      # @return [Boolean] True if Cloudenvoy is run in development mode.
+      #
+      def development?
+        config.mode == :development
+      end
+
+      #
       # Return the backend to use for sending messages.
       #
       # @return [Google::Cloud::Pub] The low level client instance.
@@ -25,7 +34,7 @@ module Cloudenvoy
       def backend
         @backend ||= Google::Cloud::PubSub.new({
           project_id: config.gcp_project_id,
-          emulator_host: config.mode == :development ? Cloudenvoy::Config::EMULATOR_HOST : nil
+          emulator_host: development? ? Cloudenvoy::Config::EMULATOR_HOST : nil
         }.compact)
       end
 
@@ -88,6 +97,12 @@ module Cloudenvoy
       def upsert_subscription(topic, name, opts = {})
         sub_config = opts.to_h.merge(endpoint: webhook_url)
 
+        # Auto-create topic in development. In non-development environments
+        # the create subscription action raises an error if the topic does
+        # not exist
+        upsert_topic(topic) if development?
+
+        # Create subscription
         ps_sub =
           begin
             # Retrieve the topic
