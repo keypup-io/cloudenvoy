@@ -1,11 +1,18 @@
 # Changelog
 
+## [v0.4.0](https://github.com/keypup-io/cloudenvoy/tree/v0.4.0) (2020-10-05)
+
+[Full Changelog](https://github.com/keypup-io/cloudenvoy/compare/v0.3.1...v0.4.0)
+
+**Bug fix:**
+- Logging: fix log processing with `semantic_logger` `v4.7.2`. Accept any args on block passed to the logger.
+
 ## [v0.3.1](https://github.com/keypup-io/cloudenvoy/tree/v0.3.1) (2020-10-05)
 
 [Full Changelog](https://github.com/keypup-io/cloudenvoy/compare/v0.3.0...v0.3.1)
 
-**Bug fix:**
-- Logging: fix log processing with `semantic_logger` `v4.7.2`. Accept any args on block passed to the logger.
+**Improvements:**
+- Development: auto-create topics in development mode when registering subscriptions.
 
 ## [v0.3.0](https://github.com/keypup-io/cloudenvoy/tree/v0.3.0) (2020-09-26)
 
