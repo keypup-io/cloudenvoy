@@ -22,10 +22,8 @@ module Cloudenvoy
     rescue InvalidSubscriberError
       # 404: Message delivery will be retried
       head :not_found
-    rescue StandardError => e
+    rescue StandardError
       # 422: Message delivery will be retried
-      Cloudenvoy.logger.error(e)
-      Cloudenvoy.logger.error(e.backtrace.join("\n"))
       head :unprocessable_entity
     end
 

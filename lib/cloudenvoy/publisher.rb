@@ -200,6 +200,7 @@ module Cloudenvoy
         begin
           publish_message
         rescue StandardError => e
+          logger.error([e, e.backtrace.join("\n")].join("\n"))
           try(:on_error, e)
           return raise(e)
         end
