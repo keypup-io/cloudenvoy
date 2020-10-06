@@ -23,8 +23,8 @@ namespace :cloudenvoy do
 
     # Notify user when no suscribers
     if list.empty?
-      puts 'There are no subscribers defined in your application'
-      return
+      puts 'Skipping subscribers (none defined)'
+      next
     end
 
     puts 'The following subscribers are configured:'
@@ -47,8 +47,8 @@ namespace :cloudenvoy do
 
     # Notify user when no topics
     if list.empty?
-      puts 'There are no publishers defined in your application'
-      return
+      puts 'Skipping publishers (none defined)'
+      next
     end
 
     puts 'The following topics are configured:'
