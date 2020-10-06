@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.4.1](https://github.com/keypup-io/cloudenvoy/tree/v0.4.1) (2020-10-06)
+
+[Full Changelog](https://github.com/keypup-io/cloudenvoy/compare/v0.4.0...v0.4.1)
+
+**Bug fix:**
+- Logging: log publisher and subscriber errors during execution
+- Rake tasks: fix early return statement when publisher or subscriber list is empty
+
 ## [v0.4.0](https://github.com/keypup-io/cloudenvoy/tree/v0.4.0) (2020-10-05)
 
 [Full Changelog](https://github.com/keypup-io/cloudenvoy/compare/v0.3.1...v0.4.0)
