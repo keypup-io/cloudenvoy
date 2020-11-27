@@ -10,6 +10,8 @@ Pub/Sub solves that event distribution problem by allowing developers to define 
 
 Cloudenvoy works with the local pub/sub emulator as well, meaning that you can work offline without access to GCP.
 
+**Maturity**: The gem is relatively young but is production-friendly. We at Keypup have already processed hundreds of thousands of pub/sub messages through Cloudenvoy. If you spot any bug, feel free to report it! I'm aiming at a `v1.0.0` around Q1 2021.
+
 ## Summary
 
 1. [Installation](#installation)
