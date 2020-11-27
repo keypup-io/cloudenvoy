@@ -1,7 +1,5 @@
 ![Build Status](https://github.com/keypup-io/cloudenvoy/workflows/Test/badge.svg) [![Gem Version](https://badge.fury.io/rb/cloudenvoy.svg)](https://badge.fury.io/rb/cloudenvoy)
 
-**Note**: this gem is currently in alpha stage and has not been tested in production yet.
-
 # Cloudenvoy
 
 Cross-application messaging framework for GCP Pub/Sub.
