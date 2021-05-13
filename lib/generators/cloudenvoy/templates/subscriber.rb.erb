@@ -1,0 +1,11 @@
+<% module_namespacing do -%>
+class <%= class_name %>Subscriber
+  include Cloudenvoy::Subscriber
+
+  cloudenvoy_options topic: 'test-msgs'
+
+  def process(msg)
+    # Do something
+  end
+end
+<% end -%>
