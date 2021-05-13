@@ -80,7 +80,7 @@ Cloudenvoy.configure do |config|
 end
 ```
 
-Define a publisher:
+Define a publisher or use generator: `rails generate cloudenvoy:publisher Dummy`
 ```ruby
 # app/publishers/dummy_publisher.rb
 
@@ -100,7 +100,7 @@ class DummyPublisher
 end
 ```
 
-Define a subscriber:
+Define a subscriber or use generator: `rails generate cloudenvoy:subscriber Dummy`
 ```ruby
 # app/subscribers/dummy_subscriber.rb
 
