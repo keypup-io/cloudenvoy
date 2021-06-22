@@ -1,0 +1,11 @@
+<% module_namespacing do -%>
+class <%= class_name %>Publisher
+  include Cloudenvoy::Publisher
+
+  cloudenvoy_options topic: 'test-msgs'
+
+  def payload(msg)
+    # Format the message payload. The payload can be a hash or a string.
+  end
+end
+<% end -%>
