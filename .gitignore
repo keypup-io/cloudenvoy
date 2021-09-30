@@ -10,5 +10,8 @@
 /tmp/
 /log/*.log
 
+# Ignore lock files (e.g. Gemfile.lock)
+*.lock
+
 # rspec failure tracking
 .rspec_status
