@@ -53,7 +53,7 @@ module Cloudenvoy
     # @return [Array<String,String>] A tuple [subscriber_name, topic ]
     #
     def self.parse_sub_uri(sub_uri)
-      sub_uri.split('/').last.split('.').last(2)
+      sub_uri.split('/').last.split('.', 2).last.split('.', 2)
     end
 
     #

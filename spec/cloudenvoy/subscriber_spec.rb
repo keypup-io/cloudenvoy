@@ -39,7 +39,17 @@ RSpec.describe Cloudenvoy::Subscriber do
   describe '.parse_sub_uri' do
     subject { described_class.parse_sub_uri(sub_uri) }
 
-    it { is_expected.to eq([subscriber_class.to_s.underscore, topic]) }
+    context 'with hyphened topic' do
+      let(:topic) { 'foo-bar-baz-topic' }
+
+      it { is_expected.to eq([subscriber_class.to_s.underscore, topic]) }
+    end
+
+    context 'with dotted topic' do
+      let(:topic) { 'foo.bar.baz.topic' }
+
+      it { is_expected.to eq([subscriber_class.to_s.underscore, topic]) }
+    end
   end
 
   describe '.execute_from_descriptor' do
