@@ -75,8 +75,8 @@ module Cloudenvoy
     def to_h
       {
         id: id,
-        payload: payload,
-        metadata: metadata,
+        payload: payload&.dup,
+        metadata: metadata&.dup,
         topic: topic,
         sub_uri: sub_uri
       }.compact
