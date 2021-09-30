@@ -40,7 +40,7 @@ module Cloudenvoy
         # Get raw body
         content = request.body.read
 
-        # Return content parsed as JSON and add job retries count
+        # Return content parsed as JSON
         JSON.parse(content).except('token')
       end
     end
