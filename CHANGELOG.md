@@ -1,5 +1,12 @@
 # Changelog
 
+## [v0.4.2](https://github.com/keypup-io/cloudenvoy/tree/v0.4.2) (2021-10-25)
+
+[Full Changelog](https://github.com/keypup-io/cloudenvoy/compare/v0.4.1...v0.4.2)
+
+**Bug fix:**
+- Message processing: fix subscription parsing for topic names with dots.
+
 ## [v0.4.1](https://github.com/keypup-io/cloudenvoy/tree/v0.4.1) (2020-10-06)
 
 [Full Changelog](https://github.com/keypup-io/cloudenvoy/compare/v0.4.0...v0.4.1)
