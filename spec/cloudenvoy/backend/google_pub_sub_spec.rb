@@ -47,6 +47,7 @@ RSpec.describe Cloudenvoy::Backend::GooglePubSub do
     context 'with any other mode' do
       let(:expected_attrs) { { project_id: gcp_project_id } }
 
+      before { allow(described_class).to receive(:development?).and_return(false) }
       it { is_expected.to eq(backend) }
     end
   end
@@ -108,6 +109,7 @@ RSpec.describe Cloudenvoy::Backend::GooglePubSub do
       allow(backend).to receive(:topic).with(topic, skip_lookup: true).and_return(gcp_topic)
       allow(described_class).to receive(:webhook_url).and_return(webhook_url)
       allow(gcp_topic).to receive(:subscribe).and_return(gcp_sub)
+      allow(described_class).to receive(:development?).and_return(false)
     end
 
     context 'with development mode' do
@@ -121,7 +123,6 @@ RSpec.describe Cloudenvoy::Backend::GooglePubSub do
 
     context 'with other mode' do
       before do
-        allow(described_class).to receive(:development?).and_return(false)
         expect(described_class).not_to receive(:upsert_topic)
       end
 
