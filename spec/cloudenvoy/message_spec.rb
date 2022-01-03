@@ -36,7 +36,7 @@ RSpec.describe Cloudenvoy::Message do
   end
 
   describe '.new' do
-    subject { described_class.new(msg_attrs) }
+    subject { described_class.new(**msg_attrs) }
 
     it { is_expected.to have_attributes(msg_attrs) }
   end
@@ -45,20 +45,20 @@ RSpec.describe Cloudenvoy::Message do
     subject { message.topic }
 
     context 'with no topic specified' do
-      let(:message) { described_class.new(msg_attrs) }
+      let(:message) { described_class.new(**msg_attrs) }
 
       it { is_expected.to eq(topic) }
     end
 
     context 'with topic specified' do
       let(:msg_topic) { topic + 'aaa' }
-      let(:message) { described_class.new(msg_attrs.merge(topic: msg_topic)) }
+      let(:message) { described_class.new(**msg_attrs.merge(topic: msg_topic)) }
 
       it { is_expected.to eq(msg_topic) }
     end
 
     context 'with no inferrable topic' do
-      let(:message) { described_class.new(msg_attrs.except(:sub_uri)) }
+      let(:message) { described_class.new(**msg_attrs.except(:sub_uri)) }
 
       it { is_expected.to be_nil }
     end
@@ -68,13 +68,13 @@ RSpec.describe Cloudenvoy::Message do
     subject { message.subscriber }
 
     context 'with valid sub_uri' do
-      let(:message) { described_class.new(msg_attrs) }
+      let(:message) { described_class.new(**msg_attrs) }
 
       it { is_expected.to have_attributes(class: TestSubscriber, message: message) }
     end
 
     context 'with absent sub_uri' do
-      let(:message) { described_class.new(msg_attrs.except(:sub_uri)) }
+      let(:message) { described_class.new(**msg_attrs.except(:sub_uri)) }
 
       it { is_expected.to be_nil }
     end
@@ -83,7 +83,7 @@ RSpec.describe Cloudenvoy::Message do
   describe '#to_h' do
     subject { message.to_h }
 
-    let(:message) { described_class.new(msg_attrs) }
+    let(:message) { described_class.new(**msg_attrs) }
     let(:expected) do
       {
         id: message.id,
@@ -98,7 +98,7 @@ RSpec.describe Cloudenvoy::Message do
   end
 
   describe '#==' do
-    subject(:message) { described_class.new(msg_attrs) }
+    subject(:message) { described_class.new(**msg_attrs) }
 
     it { is_expected.to eq(described_class.new(id: message.id)) }
     it { is_expected.not_to eq(described_class.new(id: message.id + '111')) }

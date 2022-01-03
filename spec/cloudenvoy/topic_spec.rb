@@ -2,7 +2,7 @@
 
 RSpec.describe Cloudenvoy::Topic do
   describe '.new' do
-    subject { described_class.new(attrs) }
+    subject { described_class.new(**attrs) }
 
     let(:attrs) do
       {

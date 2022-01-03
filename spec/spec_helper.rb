@@ -4,7 +4,6 @@ require 'bundler/setup'
 require 'timecop'
 require 'webmock/rspec'
 require 'semantic_logger'
-
 require 'active_support/logger'
 
 # Configure Rails dummy app

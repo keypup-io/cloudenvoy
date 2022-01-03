@@ -1,11 +1,23 @@
 # frozen_string_literal: true
 
-appraise 'rails-5.2' do
-  gem 'rails', '5.2'
+if RUBY_VERSION <= '2.7'
+  appraise 'rails-5.2' do
+    gem 'rails', '5.2'
+  end
+
+  appraise 'rails-6.0' do
+    gem 'rails', '6.0'
+  end
 end
 
-appraise 'rails-6.0' do
-  gem 'rails', '6.0'
+appraise 'rails-6.1' do
+  gem 'rails', '6.1'
+end
+
+if RUBY_VERSION >= '2.7'
+  appraise 'rails-7.0' do
+    gem 'rails', '7.0'
+  end
 end
 
 appraise 'semantic_logger-3.4' do

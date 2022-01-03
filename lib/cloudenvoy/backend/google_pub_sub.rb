@@ -32,7 +32,7 @@ module Cloudenvoy
       # @return [Google::Cloud::Pub] The low level client instance.
       #
       def backend
-        @backend ||= Google::Cloud::PubSub.new({
+        @backend ||= Google::Cloud::PubSub.new(**{
           project_id: config.gcp_project_id,
           emulator_host: development? ? Cloudenvoy::Config::EMULATOR_HOST : nil
         }.compact)
@@ -109,7 +109,7 @@ module Cloudenvoy
             ps_topic = backend.topic(topic, skip_lookup: true)
 
             # Attempt to create the subscription
-            ps_topic.subscribe(name, sub_config)
+            ps_topic.subscribe(name, **sub_config)
           rescue Google::Cloud::AlreadyExistsError
             # Update endpoint on subscription
             # Topic is not updated as it is name-dependent
