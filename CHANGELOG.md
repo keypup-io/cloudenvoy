@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.5.rc1](https://github.com/keypup-io/cloudenvoy/tree/v0.5.rc1) (2022-01-05)
+
+[Full Changelog](https://github.com/keypup-io/cloudenvoy/compare/v0.4.2...v0.5.rc1)
+
+**Improvements:**
+- Ruby 3: Rework method arguments to be compatible with Ruby 3
+- Tests: Separate test environment for Ruby 2 and Ruby 3
+- Tests: Do not load Rails by default and skip Rails-specific tests in non-Rails appraisals
+
 ## [v0.4.2](https://github.com/keypup-io/cloudenvoy/tree/v0.4.2) (2021-10-25)
 
 [Full Changelog](https://github.com/keypup-io/cloudenvoy/compare/v0.4.1...v0.4.2)
