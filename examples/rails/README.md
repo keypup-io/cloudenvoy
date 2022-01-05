@@ -22,7 +22,7 @@ HelloPublisher.publish('Some message')
     * Add the configuration of your GCP Pub/Sub
     * Set `config.processor_host` to the ngrok http or https url
     * Set `config.mode` to `:production`
-5. Launch the server: `foreman start web`
+5. Launch the server: `foreman start`
 6. Open a Rails console: `rails c`
 7. Publish messages
 ```ruby
