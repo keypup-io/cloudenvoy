@@ -35,6 +35,9 @@ Add this line to your application's Gemfile:
 
 ```ruby
 gem 'cloudenvoy'
+
+# For Ruby 3 support, please use v0.5.rc1
+gem 'cloudenvoy, '~> 0.5.rc1'
 ```
 
 And then execute:
