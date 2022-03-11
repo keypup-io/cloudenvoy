@@ -99,7 +99,7 @@ GEM
     nio4r (2.5.8)
     os (1.1.4)
     public_suffix (4.0.6)
-    puma (5.5.2)
+    puma (5.6.2)
       nio4r (~> 2.0)
     rack (2.2.3)
     rack-protection (2.2.0)
@@ -128,7 +128,7 @@ PLATFORMS
 
 DEPENDENCIES
   cloudenvoy!
-  puma (~> 5.5.2)
+  puma (~> 5.6.2)
   rake
   sinatra
 
