@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Cloudenvoy
-  VERSION = '0.5.rc1'
+  VERSION = '0.5.0'
 end
