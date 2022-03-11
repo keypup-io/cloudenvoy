@@ -1,8 +1,8 @@
 # Changelog
 
-## [v0.5.rc1](https://github.com/keypup-io/cloudenvoy/tree/v0.5.rc1) (2022-01-05)
+## [v0.5.0](https://github.com/keypup-io/cloudenvoy/tree/v0.5.0) (2022-03-11)
 
-[Full Changelog](https://github.com/keypup-io/cloudenvoy/compare/v0.4.2...v0.5.rc1)
+[Full Changelog](https://github.com/keypup-io/cloudenvoy/compare/v0.4.2...v0.5.0)
 
 **Improvements:**
 - Ruby 3: Rework method arguments to be compatible with Ruby 3
