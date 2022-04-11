@@ -9,7 +9,7 @@ module Cloudenvoy
     # @return [Proc] The context processor proc.
     #
     def self.default_context_processor
-      @default_context_processor ||= ->(loggable) { loggable.message&.to_h&.slice(:id, :metadata, :topic) || {} }
+      @default_context_processor ||= ->(loggable) { loggable.message.to_h&.slice(:id, :metadata, :topic) || {} }
     end
 
     #

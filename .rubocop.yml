@@ -1,14 +1,13 @@
 require: rubocop-rspec
 
 AllCops:
+  NewCops: enable
   Exclude:
     - 'gemfiles/**/*'
     - 'vendor/**/*'
 
-# Ruby 3.0: curly braces around last argument has meaning
-# See: https://github.com/rubocop/rubocop/issues/7641
-Style/BracesAroundHashParameters:
-  Enabled: false
+Layout/LineLength:
+  Max: 160
 
 Metrics/ClassLength:
   Max: 150
@@ -19,11 +18,17 @@ Metrics/ModuleLength:
 Metrics/AbcSize:
   Max: 30
 
-Metrics/LineLength:
-  Max: 160
-
 Metrics/MethodLength:
   Max: 20
+
+Metrics/BlockLength:
+  Exclude:
+    - cloudenvoy.gemspec
+    - lib/tasks/**/*
+    - 'spec/**/*'
+
+Metrics/ParameterLists:
+  CountKeywordArgs: false
 
 RSpec/ExpectInHook:
   Enabled: false
@@ -34,19 +39,10 @@ RSpec/EmptyLineAfterHook:
 RSpec/ScatteredSetup:
   Enabled: false
 
-Metrics/BlockLength:
-  Exclude:
-    - cloudenvoy.gemspec
-    - lib/tasks/**/*
-    - 'spec/**/*'
+RSpec/MessageSpies:
+  Enabled: false
 
 Style/Documentation:
   Exclude:
     - 'examples/**/*'
     - 'spec/**/*'
-
-Metrics/ParameterLists:
-  CountKeywordArgs: false
-
-RSpec/MessageSpies:
-  Enabled: false

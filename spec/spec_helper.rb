@@ -18,8 +18,8 @@ require 'cloudenvoy'
 require 'cloudenvoy/testing'
 
 # Require supporting files
-Dir['./spec/support/**/*.rb'].each { |f| require f }
-Dir['./spec/shared/**/*.rb'].each { |f| require f }
+Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
+Dir['./spec/shared/**/*.rb'].sort.each { |f| require f }
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

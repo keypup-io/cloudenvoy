@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description   = 'Cross-application messaging using GCP Pub/Sub (alpha)'
   spec.homepage      = 'https://github.com/keypup-io/cloudenvoy'
   spec.license       = 'MIT'
-  spec.required_ruby_version = Gem::Requirement.new('>= 2.3.0')
+  spec.required_ruby_version = Gem::Requirement.new('>= 2.4.0')
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/keypup-io/cloudenvoy'
@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'appraisal'
   spec.add_development_dependency 'rake', '>= 12.3.3'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rubocop', '0.76.0'
+  spec.add_development_dependency 'rubocop', '0.93.0'
   spec.add_development_dependency 'rubocop-rspec', '1.37.0'
   spec.add_development_dependency 'semantic_logger'
   spec.add_development_dependency 'timecop'

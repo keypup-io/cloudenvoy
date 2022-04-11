@@ -51,7 +51,7 @@ RSpec.describe Cloudenvoy::Message do
     end
 
     context 'with topic specified' do
-      let(:msg_topic) { topic + 'aaa' }
+      let(:msg_topic) { "#{topic}aaa" }
       let(:message) { described_class.new(**msg_attrs.merge(topic: msg_topic)) }
 
       it { is_expected.to eq(msg_topic) }
@@ -101,7 +101,7 @@ RSpec.describe Cloudenvoy::Message do
     subject(:message) { described_class.new(**msg_attrs) }
 
     it { is_expected.to eq(described_class.new(id: message.id)) }
-    it { is_expected.not_to eq(described_class.new(id: message.id + '111')) }
+    it { is_expected.not_to eq(described_class.new(id: "#{message.id}111")) }
     it { is_expected.not_to eq('foo') }
   end
 end

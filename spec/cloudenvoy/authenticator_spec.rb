@@ -25,7 +25,7 @@ RSpec.describe Cloudenvoy::Authenticator do
     end
 
     context 'with invalid token' do
-      let(:secret) { config.secret + 'a' }
+      let(:secret) { "#{config.secret}a" }
 
       it { is_expected.to be_falsey }
     end
@@ -43,7 +43,7 @@ RSpec.describe Cloudenvoy::Authenticator do
     end
 
     context 'with invalid token' do
-      let(:secret) { config.secret + 'a' }
+      let(:secret) { "#{config.secret}a" }
 
       it { expect { verify! }.to raise_error(Cloudenvoy::AuthenticationError) }
     end

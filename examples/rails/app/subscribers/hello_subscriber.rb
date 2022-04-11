@@ -11,6 +11,6 @@ class HelloSubscriber
   # @param [Cloudenvoy::Message] message The message to process.
   #
   def process(message)
-    logger.info("Received message #{message.payload.dig('content')}")
+    logger.info("Received message #{message.payload['content']}")
   end
 end

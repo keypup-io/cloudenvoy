@@ -13,7 +13,7 @@ RSpec.describe Cloudenvoy::Testing do
     context 'with option set' do
       before { described_class.fake! }
       before { TestPublisher.publish(payload) }
-      it { is_expected.to match([be_a(Cloudenvoy:: Message)]) }
+      it { is_expected.to match([be_a(Cloudenvoy::Message)]) }
     end
 
     context 'with block' do
@@ -22,7 +22,7 @@ RSpec.describe Cloudenvoy::Testing do
         expect(described_class).to be_enabled
       end
       before { TestPublisher.publish(payload) }
-      it { is_expected.to match([be_a(Cloudenvoy:: Message)]) }
+      it { is_expected.to match([be_a(Cloudenvoy::Message)]) }
     end
   end
 

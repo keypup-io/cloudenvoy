@@ -166,8 +166,8 @@ module Cloudenvoy
       def upsert_topic(topic)
         ps_topic = begin
           backend.create_topic(topic)
-                   rescue Google::Cloud::AlreadyExistsError
-                     backend.topic(topic)
+        rescue Google::Cloud::AlreadyExistsError
+          backend.topic(topic)
         end
 
         # Return formatted subscription
