@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.6.rc1](https://github.com/keypup-io/cloudenvoy/tree/v0.6.rc1) (2022-04-11)
+
+[Full Changelog](https://github.com/keypup-io/cloudenvoy/compare/v0.5.0...v0.6.rc1)
+
+**Improvements:**
+- Pub/sub: Add `publish_all` method to publish multiple messages in one batch
+- Ruby: Drop support for Ruby `2.3`
+- Style: Upgrade rubocop to `0.93.0`
+
 ## [v0.5.0](https://github.com/keypup-io/cloudenvoy/tree/v0.5.0) (2022-03-11)
 
 [Full Changelog](https://github.com/keypup-io/cloudenvoy/compare/v0.4.2...v0.5.0)
