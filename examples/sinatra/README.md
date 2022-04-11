@@ -17,6 +17,10 @@ Cloudenvoy.setup_subscribers
 HelloPublisher.publish('Some message')
 ```
 8. Tail the logs to see how message get processed by `HelloSubscriber`
+9. Try sending multiple messages at once:
+```ruby
+HelloPublisher.publish_all(['message1', 'message2', 'message3'])
+```
 
 ## Run using GCP Pub/Sub
 

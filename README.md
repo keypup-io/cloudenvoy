@@ -141,7 +141,7 @@ Open a Rails console and send a message
 
   # Publish multiple messages in one batch
   # Only available since v0.6.rc1
-  DummyPublisher.publish_all('Hello pub/sub', 'Hello again!', 'Hello again and again!')
+  DummyPublisher.publish_all(['Hello pub/sub', 'Hello again!', 'Hello again and again!'])
 ```
 
 Your Rails logs should display the following:
