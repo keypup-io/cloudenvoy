@@ -30,10 +30,22 @@ module Cloudenvoy
     # @param [Hash, String] payload The message content.
     # @param [Hash] attrs The message attributes.
     #
-    # @return [Cloudenvoy::Message] The created message.
+    # @return [Cloudenvoy::Message] The published message.
     #
     def self.publish(topic, payload, attrs = {})
       backend.publish(topic, payload, attrs)
+    end
+
+    #
+    # Publish multiple messages to a topic.
+    #
+    # @param [String] topic The name of the topic
+    # @param [Array<Array<[Hash, String]>>] msg_args A list of message [payload, metadata].
+    #
+    # @return [Array<Cloudenvoy::Message>] The published messages.
+    #
+    def self.publish_all(topic, msg_args)
+      backend.publish_all(topic, msg_args)
     end
 
     #

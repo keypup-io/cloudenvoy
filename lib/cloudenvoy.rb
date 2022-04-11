@@ -64,6 +64,18 @@ module Cloudenvoy
   end
 
   #
+  # Publish multiple messages to a topic. Shorthand method to Cloudenvoy::PubSubClient#publish_all.
+  #
+  # @param [String] topic The name of the topic
+  # @param [Array<Array<[Hash, String]>>] msg_args A list of message [payload, metadata].
+  #
+  # @return [Array<Cloudenvoy::Message>] The published messages.
+  #
+  def self.publish_all(topic, msg_args)
+    PubSubClient.publish_all(topic, msg_args)
+  end
+
+  #
   # Return the list of registered publishers.
   #
   # @return [Set<Cloudenvoy::Subscriber>] The list of registered publishers.

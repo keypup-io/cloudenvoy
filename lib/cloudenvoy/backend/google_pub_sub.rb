@@ -54,7 +54,7 @@ module Cloudenvoy
       # @param [Hash, String] payload The message content.
       # @param [Hash] metadata The message attributes.
       #
-      # @return [Cloudenvoy::Message] The created message.
+      # @return [Cloudenvoy::Message] The published message.
       #
       def publish(topic, payload, metadata = {})
         # Retrieve the topic
@@ -70,6 +70,38 @@ module Cloudenvoy
           metadata: metadata,
           topic: topic
         )
+      end
+
+      #
+      # Publish multiple messages to a topic.
+      #
+      # @param [String] topic The name of the topic
+      # @param [Array<Array<[Hash, String]>>] msg_args A list of message [payload, metadata].
+      #
+      # @return [Array<Cloudenvoy::Message>] The published messages.
+      #
+      def publish_all(topic, msg_args)
+        # Retrieve the topic
+        ps_topic = backend.topic(topic, skip_lookup: true)
+
+        # Publish the message
+        ps_msgs = ps_topic.publish do |batch|
+          msg_args.each do |(payload, metadata)|
+            batch.publish(payload.to_json, metadata.to_h)
+          end
+        end
+
+        # Return the formatted messages
+        ps_msgs.each_with_index.map do |ps_msg, index|
+          payload, metadata = msg_args[index]
+
+          Message.new(
+            id: ps_msg.message_id,
+            payload: payload,
+            metadata: metadata,
+            topic: topic
+          )
+        end
       end
 
       #

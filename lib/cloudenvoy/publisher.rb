@@ -89,6 +89,40 @@ module Cloudenvoy
 
         PubSubClient.upsert_topic(default_topic)
       end
+
+      #
+      # Publish all messages in one batch.
+      #
+      # @param [Array<Any>] The list of publisher arguments.
+      #
+      # @return [Array<Cloudenvoy::Message>] The published messages.
+      #
+      def publish_all(arg_list)
+        # Build the list of publishers
+        publishers = arg_list.map { |e| new(msg_args: [e].flatten(1)) }
+
+        # Batches are topic specific. We must send one batch of messages per topic.
+        publishers.group_by { |e| e.topic(*e.msg_args) }.map do |topic, topic_publishers|
+          # Chain publish calls. The very last call (when the chain becomes empty)
+          # is the actual batch publishing of messages to pub/sub
+          chain = topic_publishers.dup
+          traverse_chain = lambda do
+            if chain.empty?
+              # Send the messages in one batch and retrospectively attach them
+              # to each publisher
+              arg_list = topic_publishers.map { |e| [e.payload(*e.msg_args), e.metadata(*e.msg_args)] }
+              PubSubClient.publish_all(topic, arg_list).each_with_index do |msg, pub_index|
+                topic_publishers[pub_index].message = msg
+              end
+            else
+              # Defer message publishing to the next element
+              # in the chain until the chain is empty
+              chain.shift.publish(&traverse_chain)
+            end
+          end
+          traverse_chain.call
+        end.flatten
+      end
     end
 
     #
@@ -155,9 +189,9 @@ module Cloudenvoy
     #
     # @return [Cloudenvoy::Message] The created message.
     #
-    def publish
+    def publish(&block)
       # Format and publish message
-      resp = execute_middleware_chain
+      resp = execute_middleware_chain(&block)
 
       # Log job completion and return result
       logger.info("Published message in #{publishing_duration}s") { { duration: publishing_duration } }
@@ -191,14 +225,14 @@ module Cloudenvoy
     #
     # Execute the subscriber process method through the middleware chain.
     #
-    # @return [Any] The result of the perform method.
+    # @return [Cloudenvoy::Message] The published message.
     #
-    def execute_middleware_chain
+    def execute_middleware_chain(&block)
       self.publishing_started_at = Time.now
 
       Cloudenvoy.config.publisher_middleware.invoke(self) do
         begin
-          publish_message
+          block_given? ? block.call : publish_message
         rescue StandardError => e
           logger.error([e, e.backtrace.join("\n")].join("\n"))
           try(:on_error, e)

@@ -59,6 +59,39 @@ RSpec.describe Cloudenvoy::Backend::MemoryPubSub do
     it { is_expected.to have_attributes(expected_msg) }
   end
 
+  describe '.publish_all' do
+    subject { described_class.publish_all(topic, [[payload1, metadata1], [payload2, metadata2]]) }
+
+    let(:topic) { 'foo' }
+
+    let(:payload1) { { foo: 'bar1' } }
+    let(:metadata1) { { some: 'attribute1' } }
+    let(:payload2) { { foo: 'bar2' } }
+    let(:metadata2) { { some: 'attribute2' } }
+
+    let(:expected_ret) do
+      [
+        {
+          class: Cloudenvoy::Message,
+          topic: topic,
+          payload: payload1,
+          metadata: metadata1
+        },
+        {
+          class: Cloudenvoy::Message,
+          topic: topic,
+          payload: payload2,
+          metadata: metadata2
+        }
+      ]
+    end
+
+    before { described_class.clear_all }
+    after { expect(described_class.queue(topic)).to match(expected_ret.map { |e| have_attributes(e) }) }
+
+    it { is_expected.to match(expected_ret.map { |e| have_attributes(e) }) }
+  end
+
   describe '.upsert_subscription' do
     subject { described_class.upsert_subscription(topic, name, foo: 'bar') }
 

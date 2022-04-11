@@ -136,7 +136,12 @@ rails s -p 3000
 
 Open a Rails console and send a message
 ```ruby
+  # One message at a time
   DummyPublisher.publish('Hello pub/sub')
+
+  # Publish multiple messages in one batch
+  # Only available since v0.6.rc1
+  DummyPublisher.publish_all('Hello pub/sub', 'Hello again!', 'Hello again and again!')
 ```
 
 Your Rails logs should display the following:
@@ -252,10 +257,21 @@ DummySubscriber.setup
 ## Publishing messages
 
 ### Sending messages
+**Note**: The `publish_all` method is only available since `v0.6.rc1`
 
 Cloudenvoy provides a helper method to publish arbitrary messages to any topic.
 ```ruby
+# Publish a single message
 Cloudenvoy.publish('my-topic', { 'some' => 'payload' }, { 'optional' => 'message attribute' })
+
+# Publish multiple messages in one batch
+# Only available since v0.6.rc1
+Cloudenvoy.publish_all('my-topic', [
+  # Message 1
+  [{ 'some' => 'msg1 payload' }, { 'optional' => 'msg1 attribute' }],
+  # Message 2
+  [{ 'some' => 'msg2 payload' }, { 'optional' => 'msg2 attribute' }]
+])
 ```
 
 This helper is useful for sending basic messages however it is not the preferred way of sending messages as you will quickly clutter your application with message formatting logic over time.
@@ -292,8 +308,21 @@ Then in your user model you can do the following:
 class User < ApplicationRecord
   after_create :publish_user
 
+  # Example: publish multiple messages in one batch
+  # Only available since v0.6.rc1
+  # 
+  #
+  # Set user status to 'active' without involving callbacks
+  # then manually publish the new state of users in one batch
+  def self.enable_all_users
+    User.update_all(status: 'active', updated_at: Time.current)
+    UserPublisher.publish_all(User.all)
+  end
+
   private
 
+  # Example: publish one message at a time
+  #
   # Publish users after they have been created
   def publish_user
     UserPublisher.publish(self)

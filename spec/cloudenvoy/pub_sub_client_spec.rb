@@ -31,6 +31,18 @@ RSpec.describe Cloudenvoy::PubSubClient do
     it { is_expected.to eq(msg) }
   end
 
+  describe '.publish_all' do
+    subject { described_class.publish_all(topic, msg_args) }
+
+    let(:topic) { 'some-topic' }
+    let(:msg_args) { [[{ foo: 'bar1' }, { some: 'attribute1' }], [{ foo: 'bar2' }, { some: 'attribute2' }]] }
+    let(:msgs) { [instance_double('Cloudenvoy::Message'), instance_double('Cloudenvoy::Message')] }
+
+    before { allow(described_class).to receive(:backend).and_return(backend) }
+    before { expect(backend).to receive(:publish_all).with(topic, msg_args).and_return(msgs) }
+    it { is_expected.to eq(msgs) }
+  end
+
   describe '.upsert_subscription' do
     subject { described_class.upsert_subscription(topic, sub_name, opts) }
 

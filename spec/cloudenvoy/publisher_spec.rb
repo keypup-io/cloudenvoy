@@ -2,7 +2,7 @@
 
 RSpec.describe Cloudenvoy::Publisher do
   let(:publisher_class) { TestPublisher }
-  let(:msg_args) { [{ foo: 'bar' }, { bar: 'foo' }] }
+  let(:msg_args) { [{ foo: 'bar' }] }
   let(:publisher) { publisher_class.new(msg_args: msg_args) }
 
   describe '.cloudenvoy_options_hash' do
@@ -31,6 +31,73 @@ RSpec.describe Cloudenvoy::Publisher do
     before { expect(publisher_class).to receive(:new).with(msg_args: msg_args).and_return(publisher) }
     before { expect(publisher).to receive(:publish).and_return(msg) }
     it { is_expected.to eq(msg) }
+  end
+
+  describe '.publish_all' do
+    subject { publisher_class.publish_all(arg_list) }
+
+    let(:arg_list) { [{ bar1: '1' }, { bar1: '2' }] }
+    let(:expected_ret) do
+      arg_list.map do |args|
+        msg_args = [args].flatten(1)
+        publisher = publisher_class.new(msg_args: msg_args)
+
+        {
+          class: Cloudenvoy::Message,
+          topic: publisher.topic(*msg_args),
+          payload: publisher.payload(*msg_args),
+          metadata: publisher.metadata(*msg_args)
+        }
+      end
+    end
+
+    around { |e| Cloudenvoy::Testing.fake! { e.run } }
+
+    context 'with all messages to the same topic' do
+      let(:topic) { publisher_class.default_topic }
+      let(:queue) { Cloudenvoy::Testing.queue(topic) }
+
+      before { expect(Cloudenvoy::PubSubClient).to receive(:publish_all).with(topic, expected_ret.map { |e| [e[:payload], e[:metadata]] }).and_call_original }
+      after { expect(queue).to match(expected_ret.map { |e| have_attributes(e) }) }
+
+      it { is_expected.to match(expected_ret.map { |e| have_attributes(e) }) }
+    end
+
+    context 'with publisher middleware' do
+      let(:topic) { publisher_class.default_topic }
+      let(:queue) { Cloudenvoy::Testing.queue(topic) }
+
+      let(:modified_ret) { expected_ret.map { |e| e.merge(payload: e[:payload].merge(_middleware_called: true)) } }
+
+      before { Cloudenvoy.config.publisher_middleware.add(ArgModifyingMiddleware) }
+      before { expect(Cloudenvoy::PubSubClient).to receive(:publish_all).with(topic, modified_ret.map { |e| [e[:payload], e[:metadata]] }).and_call_original }
+      after { expect(queue).to match(modified_ret.map { |e| have_attributes(e) }) }
+
+      it { is_expected.to match(modified_ret.map { |e| have_attributes(e) }) }
+    end
+
+    context 'with multiple topics' do
+      let(:arg_list) { [{ bar1: '1.1', _topic: topic1 }, { bar1: '1.2', _topic: topic1 }, { bar1: '2.1', _topic: topic2 }] }
+
+      let(:topic1) { 'topic1' }
+      let(:topic2) { 'topic2' }
+      let(:queue1) { Cloudenvoy::Testing.queue(topic1) }
+      let(:queue2) { Cloudenvoy::Testing.queue(topic2) }
+
+      let(:topic1_msgs) { expected_ret.select { |e| e[:topic] == topic1 } }
+      let(:topic2_msgs) { expected_ret.select { |e| e[:topic] == topic2 } }
+
+      before do
+        expect(Cloudenvoy::PubSubClient).to receive(:publish_all).with(topic1, topic1_msgs.map { |e| [e[:payload], e[:metadata]] }).and_call_original
+        expect(Cloudenvoy::PubSubClient).to receive(:publish_all).with(topic2, topic2_msgs.map { |e| [e[:payload], e[:metadata]] }).and_call_original
+      end
+      after do
+        expect(queue1).to match(topic1_msgs.map { |e| have_attributes(e) })
+        expect(queue2).to match(topic2_msgs.map { |e| have_attributes(e) })
+      end
+
+      it { is_expected.to match(expected_ret.map { |e| have_attributes(e) }) }
+    end
   end
 
   describe '.setup' do
@@ -139,7 +206,7 @@ RSpec.describe Cloudenvoy::Publisher do
       it { is_expected.to eq(ret_message) }
     end
 
-    context 'with server middleware chain' do
+    context 'with publisher middleware' do
       before { Cloudenvoy.config.publisher_middleware.add(TestMiddleware) }
       after { expect(publisher.middleware_called).to be_truthy }
       it { is_expected.to eq(ret_message) }

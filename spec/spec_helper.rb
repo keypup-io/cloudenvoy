@@ -31,6 +31,13 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  # Reset context before each test
+  config.before do
+    Cloudenvoy::Testing.clear_all
+    Cloudenvoy.config.publisher_middleware.clear
+    Cloudenvoy.config.subscriber_middleware.clear
+  end
 end
 
 # Configure for tests

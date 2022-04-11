@@ -87,6 +87,49 @@ RSpec.describe Cloudenvoy::Backend::GooglePubSub do
     it { is_expected.to have_attributes(expected_msg) }
   end
 
+  describe '.publish_all' do
+    subject { described_class.publish_all(topic, [[payload1, metadata1], [payload2, metadata2]]) }
+
+    let(:topic) { 'some-topic' }
+
+    let(:payload1) { { foo: 'bar1' } }
+    let(:metadata1) { { some: 'attribute1' } }
+    let(:payload2) { { foo: 'bar2' } }
+    let(:metadata2) { { some: 'attribute2' } }
+
+    let(:gcp_batch) { instance_double('Google::Cloud::PubSub::BatchPublisher') }
+    let(:gcp_msg1) { instance_double('Google::Cloud::PubSub::Message', message_id: '123') }
+    let(:gcp_msg2) { instance_double('Google::Cloud::PubSub::Message', message_id: '321') }
+    let(:expected_ret) do
+      [
+        {
+          class: Cloudenvoy::Message,
+          id: gcp_msg1.message_id,
+          topic: topic,
+          payload: payload1,
+          metadata: metadata1
+        },
+        {
+          class: Cloudenvoy::Message,
+          id: gcp_msg2.message_id,
+          topic: topic,
+          payload: payload2,
+          metadata: metadata2
+        }
+      ]
+    end
+
+    before do
+      expect(described_class).to receive(:backend).and_return(backend)
+      expect(backend).to receive(:topic).with(topic, skip_lookup: true).and_return(gcp_topic)
+      expect(gcp_topic).to receive(:publish).and_yield(gcp_batch).and_return([gcp_msg1, gcp_msg2])
+      expect(gcp_batch).to receive(:publish).with(payload1.to_json, metadata1).and_return(gcp_msg1)
+      expect(gcp_batch).to receive(:publish).with(payload2.to_json, metadata2).and_return(gcp_msg2)
+    end
+
+    it { is_expected.to match(expected_ret.map { |e| have_attributes(e) }) }
+  end
+
   describe '.upsert_subscription' do
     subject { described_class.upsert_subscription(topic, sub_name, opts) }
 

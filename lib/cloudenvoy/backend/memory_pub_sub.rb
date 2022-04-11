@@ -47,7 +47,7 @@ module Cloudenvoy
       # @param [Hash, String] payload The message content.
       # @param [Hash] attrs The message attributes.
       #
-      # @return [Cloudenvoy::Message] The created message.
+      # @return [Cloudenvoy::Message] The published message.
       #
       def publish(topic, payload, metadata = {})
         msg = Message.new(
@@ -59,6 +59,30 @@ module Cloudenvoy
         queue(topic).push(msg)
 
         msg
+      end
+
+      #
+      # Publish multiple messages to a topic.
+      #
+      # @param [String] topic The name of the topic
+      # @param [Array<Array<[Hash, String]>>] msg_args A list of message [payload, metadata].
+      #
+      # @return [Array<Cloudenvoy::Message>] The published messages.
+      #
+      def publish_all(topic, msg_args)
+        # Build the messages
+        msgs = msg_args.map do |(payload, metadata)|
+          Message.new(
+            id: SecureRandom.uuid,
+            payload: payload,
+            metadata: metadata,
+            topic: topic
+          )
+        end
+
+        # Push all the messages and return them
+        queue(topic).push(*msgs)
+        msgs
       end
 
       #
