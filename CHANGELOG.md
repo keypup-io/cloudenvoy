@@ -1,8 +1,8 @@
 # Changelog
 
-## [v0.6.rc1](https://github.com/keypup-io/cloudenvoy/tree/v0.6.rc1) (2022-04-11)
+## [v0.6.0](https://github.com/keypup-io/cloudenvoy/tree/v0.6.0) (2022-07-21)
 
-[Full Changelog](https://github.com/keypup-io/cloudenvoy/compare/v0.5.0...v0.6.rc1)
+[Full Changelog](https://github.com/keypup-io/cloudenvoy/compare/v0.5.0...v0.6.0)
 
 **Improvements:**
 - Pub/sub: Add `publish_all` method to publish multiple messages in one batch
