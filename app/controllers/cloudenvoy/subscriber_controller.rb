@@ -3,6 +3,7 @@
 module Cloudenvoy
   # Handle execution of Cloudenvoy subscribers
   class SubscriberController < ActionController::Base
+    protect_from_forgery
     # No need for CSRF verification on API endpoints
     skip_before_action :verify_authenticity_token
 
