@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         ruby:
-          - '2.7.5'
+          - '2.7'
         appraisal:
           - 'rails-5.2'
           - 'rails-6.0'
@@ -18,19 +18,13 @@ jobs:
           - 'semantic_logger-4.6'
           - 'semantic_logger-4.7.0'
           - 'semantic_logger-4.7.2'
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.appraisal }}.gemfile
     steps:
       - uses: actions/checkout@v2
       - uses: zhulik/redis-action@1.1.0
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: Build and test with Rake
-        env:
-            APPRAISAL_CONTEXT: ${{ matrix.appraisal }}
-        run: |
-          gem install bundler
-          bundle install --jobs 4 --retry 3
-          bundle exec appraisal ${APPRAISAL_CONTEXT} bundle
-          bundle exec appraisal ${APPRAISAL_CONTEXT} rspec
+      - run: bundle exec rspec
