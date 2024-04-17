@@ -60,11 +60,9 @@ module Cloudenvoy
     # @return [Subscriber] The instantiated subscriber.
     #
     def subscriber
-      @subscriber ||= begin
-        return nil unless sub_uri && (klass = Subscriber.from_sub_uri(sub_uri))
+      return nil unless sub_uri && (klass = Subscriber.from_sub_uri(sub_uri))
 
-        klass.new(message: self)
-      end
+      @subscriber ||= klass.new(message: self)
     end
 
     #

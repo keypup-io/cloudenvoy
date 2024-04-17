@@ -7,7 +7,7 @@ RSpec.describe Cloudenvoy::Subscription do
     let(:attrs) do
       {
         name: 'foo',
-        original: instance_double('Google::Cloud::PubSub::Subscription')
+        original: instance_double(Google::Cloud::PubSub::Subscription)
       }
     end
 

@@ -4,8 +4,8 @@ require 'cloudenvoy/backend/google_pub_sub'
 
 RSpec.describe Cloudenvoy::Backend::GooglePubSub do
   let(:gcp_project_id) { Cloudenvoy.config.gcp_project_id }
-  let(:backend) { instance_double('Google::Cloud::PubSub::Project') }
-  let(:gcp_topic) { instance_double('Google::Cloud::PubSub::Topic') }
+  let(:backend) { instance_double(Google::Cloud::PubSub::Project) }
+  let(:gcp_topic) { instance_double(Google::Cloud::PubSub::Topic) }
 
   describe '.config' do
     subject { described_class.config }
@@ -67,7 +67,7 @@ RSpec.describe Cloudenvoy::Backend::GooglePubSub do
     let(:topic) { 'some-topic' }
     let(:payload) { { foo: 'bar' } }
     let(:metadata) { { some: 'attribute' } }
-    let(:gcp_msg) { instance_double('Google::Cloud::PubSub::Message', message_id: '123') }
+    let(:gcp_msg) { instance_double(Google::Cloud::PubSub::Message, message_id: '123') }
     let(:expected_msg) do
       {
         class: Cloudenvoy::Message,
@@ -97,9 +97,9 @@ RSpec.describe Cloudenvoy::Backend::GooglePubSub do
     let(:payload2) { { foo: 'bar2' } }
     let(:metadata2) { { some: 'attribute2' } }
 
-    let(:gcp_batch) { instance_double('Google::Cloud::PubSub::BatchPublisher') }
-    let(:gcp_msg1) { instance_double('Google::Cloud::PubSub::Message', message_id: '123') }
-    let(:gcp_msg2) { instance_double('Google::Cloud::PubSub::Message', message_id: '321') }
+    let(:gcp_batch) { instance_double(Google::Cloud::PubSub::BatchPublisher) }
+    let(:gcp_msg1) { instance_double(Google::Cloud::PubSub::Message, message_id: '123') }
+    let(:gcp_msg2) { instance_double(Google::Cloud::PubSub::Message, message_id: '321') }
     let(:expected_ret) do
       [
         {
@@ -137,7 +137,7 @@ RSpec.describe Cloudenvoy::Backend::GooglePubSub do
     let(:sub_name) { 'some.name' }
     let(:opts) { { retain_acked: true } }
     let(:webhook_url) { "#{described_class.config.processor_url}?token=123" }
-    let(:gcp_sub) { instance_double('Google::Cloud::PubSub::Subscription', name: 'some.sub') }
+    let(:gcp_sub) { instance_double(Google::Cloud::PubSub::Subscription, name: 'some.sub') }
     let(:sub_opts) { opts.merge(endpoint: webhook_url) }
     let(:expected_sub) do
       {
@@ -200,7 +200,7 @@ RSpec.describe Cloudenvoy::Backend::GooglePubSub do
     subject { described_class.upsert_topic(topic) }
 
     let(:topic) { 'some-topic' }
-    let(:gcp_topic) { instance_double('Google::Cloud::PubSub::Topic', name: topic) }
+    let(:gcp_topic) { instance_double(Google::Cloud::PubSub::Topic, name: topic) }
     let(:expected_topic) do
       {
         class: Cloudenvoy::Topic,

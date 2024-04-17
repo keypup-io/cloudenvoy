@@ -7,7 +7,7 @@ RSpec.describe Cloudenvoy::Topic do
     let(:attrs) do
       {
         name: 'foo',
-        original: instance_double('Google::Cloud::PubSub::Topic')
+        original: instance_double(Google::Cloud::PubSub::Topic)
       }
     end
 

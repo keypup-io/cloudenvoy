@@ -55,7 +55,7 @@ RSpec.describe Cloudenvoy::Subscriber do
   describe '.execute_from_descriptor' do
     subject(:execute) { described_class.execute_from_descriptor(descriptor) }
 
-    let(:ret_msg) { instance_double('Cloudenvoy::Message', subscriber: ret_sub) }
+    let(:ret_msg) { instance_double(Cloudenvoy::Message, subscriber: ret_sub) }
     let(:ret_sub) { subscriber }
 
     before { expect(Cloudenvoy::Message).to receive(:from_descriptor).with(descriptor).and_return(ret_msg) }
@@ -82,7 +82,7 @@ RSpec.describe Cloudenvoy::Subscriber do
 
     before { subscriber_class.cloudenvoy_options(opts) }
     after { subscriber_class.cloudenvoy_options(original_opts) }
-    it { is_expected.to eq(Hash[opts.map { |k, v| [k.to_sym, v] }]) }
+    it { is_expected.to eq(opts.transform_keys(&:to_sym)) }
   end
 
   describe '.topics' do
@@ -135,7 +135,7 @@ RSpec.describe Cloudenvoy::Subscriber do
     subject { subscriber_class.setup }
 
     let(:topics) { [{ name: 'foo' }, { name: 'bar', retain_acked: true }] }
-    let(:envoy_subs) { Array.new(2) { instance_double('Cloudenvoy::Subscription') } }
+    let(:envoy_subs) { Array.new(2) { instance_double(Cloudenvoy::Subscription) } }
 
     before do
       allow(subscriber_class).to receive(:topics).and_return(topics)

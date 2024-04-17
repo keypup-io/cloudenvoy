@@ -46,7 +46,7 @@ module Cloudenvoy
       #
       def cloudenvoy_options(opts = {})
         opt_list = opts&.map { |k, v| [k.to_sym, v] } || [] # symbolize
-        @cloudenvoy_options_hash = Hash[opt_list]
+        @cloudenvoy_options_hash = opt_list.to_h
       end
 
       #
@@ -231,13 +231,11 @@ module Cloudenvoy
       self.publishing_started_at = Time.now
 
       Cloudenvoy.config.publisher_middleware.invoke(self) do
-        begin
-          block_given? ? block.call : publish_message
-        rescue StandardError => e
-          logger.error([e, e.backtrace.join("\n")].join("\n"))
-          try(:on_error, e)
-          return raise(e)
-        end
+        block_given? ? block.call : publish_message
+      rescue StandardError => e
+        logger.error([e, e.backtrace.join("\n")].join("\n"))
+        try(:on_error, e)
+        return raise(e)
       end
     ensure
       self.publishing_ended_at = Time.now

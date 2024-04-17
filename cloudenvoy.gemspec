@@ -12,7 +12,6 @@ Gem::Specification.new do |spec|
   spec.description   = 'Cross-application messaging using GCP Pub/Sub (alpha)'
   spec.homepage      = 'https://github.com/keypup-io/cloudenvoy'
   spec.license       = 'MIT'
-  spec.required_ruby_version = Gem::Requirement.new('>= 2.4.0')
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/keypup-io/cloudenvoy'
@@ -27,17 +26,12 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
+  spec.required_ruby_version = '>= 2.7.0'
+
   spec.add_dependency 'activesupport'
   spec.add_dependency 'google-cloud-pubsub', '~> 2.0'
   spec.add_dependency 'jwt'
   spec.add_dependency 'retriable'
 
-  spec.add_development_dependency 'appraisal'
-  spec.add_development_dependency 'rake', '>= 12.3.3'
-  spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rubocop', '0.93.0'
-  spec.add_development_dependency 'rubocop-rspec', '1.37.0'
-  spec.add_development_dependency 'semantic_logger'
-  spec.add_development_dependency 'timecop'
-  spec.add_development_dependency 'webmock'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 end

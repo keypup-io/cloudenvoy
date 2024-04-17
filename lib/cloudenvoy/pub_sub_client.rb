@@ -12,15 +12,13 @@ module Cloudenvoy
       # Re-evaluate backend every time if testing mode enabled
       @backend = nil if defined?(Cloudenvoy::Testing)
 
-      @backend ||= begin
-        if defined?(Cloudenvoy::Testing) && Cloudenvoy::Testing.in_memory?
-          require 'cloudenvoy/backend/memory_pub_sub'
-          Backend::MemoryPubSub
-        else
-          require 'cloudenvoy/backend/google_pub_sub'
-          Backend::GooglePubSub
-        end
-      end
+      @backend ||= if defined?(Cloudenvoy::Testing) && Cloudenvoy::Testing.in_memory?
+                     require 'cloudenvoy/backend/memory_pub_sub'
+                     Backend::MemoryPubSub
+                   else
+                     require 'cloudenvoy/backend/google_pub_sub'
+                     Backend::GooglePubSub
+                   end
     end
 
     #

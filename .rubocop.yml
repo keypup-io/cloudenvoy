@@ -2,12 +2,18 @@ require: rubocop-rspec
 
 AllCops:
   NewCops: enable
+  SuggestExtensions: false
+  TargetRubyVersion: 2.7
   Exclude:
     - 'gemfiles/**/*'
     - 'vendor/**/*'
 
 Layout/LineLength:
   Max: 160
+
+Lint/EmptyBlock:
+  Exclude:
+    - 'examples/rails/config/routes.rb'
 
 Metrics/ClassLength:
   Max: 150
@@ -40,6 +46,15 @@ RSpec/ScatteredSetup:
   Enabled: false
 
 RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/StubbedMock:
+  Enabled: false
+
+RSpec/IndexedLet:
   Enabled: false
 
 Style/Documentation:

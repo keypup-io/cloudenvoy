@@ -112,4 +112,4 @@ module Cloudenvoy
   end
 end
 
-require 'cloudenvoy/engine' if defined?(::Rails::Engine)
+require 'cloudenvoy/engine' if defined?(Rails::Engine)

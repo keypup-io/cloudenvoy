@@ -82,7 +82,7 @@ module Cloudenvoy
       #
       def cloudenvoy_options(opts = {})
         opt_list = opts&.map { |k, v| [k.to_sym, v] } || [] # symbolize
-        @cloudenvoy_options_hash = Hash[opt_list]
+        @cloudenvoy_options_hash = opt_list.to_h
       end
 
       #
@@ -208,13 +208,11 @@ module Cloudenvoy
       self.process_started_at = Time.now
 
       Cloudenvoy.config.subscriber_middleware.invoke(self) do
-        begin
-          process(message)
-        rescue StandardError => e
-          logger.error([e, e.backtrace.join("\n")].join("\n"))
-          try(:on_error, e)
-          raise(e)
-        end
+        process(message)
+      rescue StandardError => e
+        logger.error([e, e.backtrace.join("\n")].join("\n"))
+        try(:on_error, e)
+        raise(e)
       end
     ensure
       self.process_ended_at = Time.now

@@ -19,7 +19,7 @@ end
 
 if RUBY_VERSION >= '2.7'
   appraise 'rails-7.0' do
-    gem 'rails', '7.0'
+    gem 'rails', '~> 7.0.0'
     gem 'rspec-rails'
   end
 end

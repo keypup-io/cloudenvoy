@@ -13,7 +13,7 @@ RSpec.describe Cloudenvoy::Publisher do
 
     before { publisher_class.cloudenvoy_options(opts) }
     after { publisher_class.cloudenvoy_options(original_opts) }
-    it { is_expected.to eq(Hash[opts.map { |k, v| [k.to_sym, v] }]) }
+    it { is_expected.to eq(opts.transform_keys(&:to_sym)) }
   end
 
   describe '.default_topic' do
@@ -25,8 +25,8 @@ RSpec.describe Cloudenvoy::Publisher do
   describe '.publish' do
     subject { publisher_class.publish(*msg_args) }
 
-    let(:publisher) { instance_double('TestPublisher') }
-    let(:msg) { instance_double('Cloudenvoy::Message') }
+    let(:publisher) { instance_double(TestPublisher) }
+    let(:msg) { instance_double(Cloudenvoy::Message) }
 
     before { expect(publisher_class).to receive(:new).with(msg_args: msg_args).and_return(publisher) }
     before { expect(publisher).to receive(:publish).and_return(msg) }
@@ -103,7 +103,7 @@ RSpec.describe Cloudenvoy::Publisher do
   describe '.setup' do
     subject { publisher_class.setup }
 
-    let(:envoy_topic) { instance_double('Cloudenvoy::Topic') }
+    let(:envoy_topic) { instance_double(Cloudenvoy::Topic) }
 
     context 'with default topic' do
       before do

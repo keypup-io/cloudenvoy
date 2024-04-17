@@ -3,7 +3,7 @@
 require 'cloudenvoy/backend/memory_pub_sub'
 
 RSpec.describe Cloudenvoy::Backend::MemoryPubSub do
-  let(:message) { instance_double('Cloudenvoy::Message') }
+  let(:message) { instance_double(Cloudenvoy::Message) }
 
   describe '.queue' do
     subject { described_class.queue(topic) }
