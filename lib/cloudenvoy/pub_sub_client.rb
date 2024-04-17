@@ -45,7 +45,9 @@ module Cloudenvoy
     # @return [Array<Cloudenvoy::Message>] The published messages.
     #
     def self.publish_all(topic, msg_args)
-      backend.publish_all(topic, msg_args)
+      msg_args.each_slice(Config::BATCH_MAX_MSG_COUNT).flat_map do |args_batch|
+        backend.publish_all(topic, args_batch)
+      end
     end
 
     #

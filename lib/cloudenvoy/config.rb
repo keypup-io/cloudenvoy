@@ -14,6 +14,10 @@ module Cloudenvoy
     # Default application path used for processing messages
     DEFAULT_PROCESSOR_PATH = '/cloudenvoy/receive'
 
+    # Maximum number of messages in a batch
+    BATCH_MAX_MSG_COUNT = 1000
+
+    # Errors
     PROCESSOR_HOST_MISSING = <<~DOC
       Missing host for processing.
       Please specify a processor hostname in form of `https://some-public-dns.example.com`'

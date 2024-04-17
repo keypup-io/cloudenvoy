@@ -38,9 +38,25 @@ RSpec.describe Cloudenvoy::PubSubClient do
     let(:msg_args) { [[{ foo: 'bar1' }, { some: 'attribute1' }], [{ foo: 'bar2' }, { some: 'attribute2' }]] }
     let(:msgs) { [instance_double('Cloudenvoy::Message'), instance_double('Cloudenvoy::Message')] }
 
-    before { allow(described_class).to receive(:backend).and_return(backend) }
-    before { expect(backend).to receive(:publish_all).with(topic, msg_args).and_return(msgs) }
-    it { is_expected.to eq(msgs) }
+    before do
+      allow(described_class).to receive(:backend).and_return(backend)
+      msg_args.each_slice(Cloudenvoy::Config::BATCH_MAX_MSG_COUNT).each_with_index do |slice, index|
+        msg_ret = msgs.each_slice(Cloudenvoy::Config::BATCH_MAX_MSG_COUNT).to_a[index]
+        expect(backend).to receive(:publish_all).with(topic, slice).and_return(msg_ret)
+      end
+    end
+
+    context "with less than #{Cloudenvoy::Config::BATCH_MAX_MSG_COUNT} messages" do
+      it { is_expected.to eq(msgs) }
+    end
+
+    context "with more than #{Cloudenvoy::Config::BATCH_MAX_MSG_COUNT} messages" do
+      let(:msg_count) { Cloudenvoy::Config::BATCH_MAX_MSG_COUNT + 10 }
+      let(:msg_args) { Array.new(msg_count) { |n| [{ foo: "bar#{n}" }, { some: "attribute#{n}" }] } }
+      let(:msgs) { Array.new(msg_count) { instance_double('Cloudenvoy::Message') } }
+
+      it { is_expected.to eq(msgs) }
+    end
   end
 
   describe '.upsert_subscription' do
