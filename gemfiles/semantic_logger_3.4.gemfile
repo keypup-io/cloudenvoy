@@ -11,6 +11,5 @@ gem "rubocop-rspec", "2.22.0"
 gem "semantic_logger", "3.4.1"
 gem "timecop"
 gem "webmock"
-gem "activesupport", "6.1"
 
 gemspec path: "../"

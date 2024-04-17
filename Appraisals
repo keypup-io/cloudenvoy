@@ -25,21 +25,17 @@ if RUBY_VERSION >= '2.7'
 end
 
 appraise 'semantic_logger-3.4' do
-  gem 'activesupport', '6.1' # ruby 2.5 / 2.6 compatibility
   gem 'semantic_logger', '3.4.1'
 end
 
 appraise 'semantic_logger-4.6' do
-  gem 'activesupport', '6.1' # ruby 2.5 / 2.6 compatibility
   gem 'semantic_logger', '4.6.1'
 end
 
 appraise 'semantic_logger-4.7.0' do
-  gem 'activesupport', '6.1' # ruby 2.5 / 2.6 compatibility
   gem 'semantic_logger', '4.7.0'
 end
 
 appraise 'semantic_logger-4.7.2' do
-  gem 'activesupport', '6.1' # ruby 2.5 / 2.6 compatibility
   gem 'semantic_logger', '4.7.2'
 end
