@@ -13,12 +13,12 @@ jobs:
           - '3.2'
           - '3.3'
         appraisal:
-          - 'rails-6.1'
-          - 'rails-7.0'
-          - 'semantic_logger-3.4'
-          - 'semantic_logger-4.6'
-          - 'semantic_logger-4.7.0'
-          - 'semantic_logger-4.7.2'
+          - 'rails_6.1'
+          - 'rails_7.0'
+          - 'semantic_logger_3.4'
+          - 'semantic_logger_4.6'
+          - 'semantic_logger_4.7.0'
+          - 'semantic_logger_4.7.2'
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.appraisal }}.gemfile
     steps:
