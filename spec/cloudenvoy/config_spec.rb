@@ -229,7 +229,7 @@ RSpec.describe Cloudenvoy::Config do
     end
 
     it { is_expected.to be_a(Cloudenvoy::Middleware::Chain) }
-    it { expect(middlewares).to be_exists(TestMiddleware) }
+    it { expect(middlewares).to exist(TestMiddleware) }
   end
 
   describe '#subscriber_middleware' do
@@ -242,6 +242,6 @@ RSpec.describe Cloudenvoy::Config do
     end
 
     it { is_expected.to be_a(Cloudenvoy::Middleware::Chain) }
-    it { expect(middlewares).to be_exists(TestMiddleware) }
+    it { expect(middlewares).to exist(TestMiddleware) }
   end
 end

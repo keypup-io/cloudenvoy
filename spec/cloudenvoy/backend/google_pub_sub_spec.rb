@@ -148,11 +148,9 @@ RSpec.describe Cloudenvoy::Backend::GooglePubSub do
     end
 
     before do
-      allow(described_class).to receive(:backend).and_return(backend)
       allow(backend).to receive(:topic).with(topic, skip_lookup: true).and_return(gcp_topic)
-      allow(described_class).to receive(:webhook_url).and_return(webhook_url)
       allow(gcp_topic).to receive(:subscribe).and_return(gcp_sub)
-      allow(described_class).to receive(:development?).and_return(false)
+      allow(described_class).to receive_messages(backend: backend, webhook_url: webhook_url, development?: false)
     end
 
     context 'with development mode' do

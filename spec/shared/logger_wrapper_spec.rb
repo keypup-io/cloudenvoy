@@ -88,7 +88,7 @@ RSpec.shared_examples Cloudenvoy::LoggerWrapper do
   describe '#context_processor' do
     subject { logger.context_processor }
 
-    let(:processor) { ->(loggable) { loggable.to_h } }
+    let(:processor) { lambda(&:to_h) }
 
     context 'with no context_processor defined' do
       it { is_expected.to eq(described_class.default_context_processor) }

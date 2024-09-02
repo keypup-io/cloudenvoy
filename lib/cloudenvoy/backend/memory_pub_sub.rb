@@ -37,7 +37,7 @@ module Cloudenvoy
       # @param [String] name The topic to clear.
       #
       def clear_all
-        @queues&.values&.each(&:clear)
+        @queues&.each_value(&:clear)
       end
 
       #
