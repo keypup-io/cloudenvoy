@@ -9,7 +9,7 @@ ruby '~> 3.0'
 gem 'rails', '~> 6.0'
 
 # Server
-gem 'puma', '~> 6.4.2'
+gem 'puma', '~> 6.4.3'
 
 # Messaging via GCP Pub/Sub
 gem 'cloudenvoy', path: '../../'
