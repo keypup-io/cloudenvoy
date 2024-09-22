@@ -1,4 +1,4 @@
-![Build Status](https://github.com/keypup-io/cloudenvoy/workflows/Test/badge.svg) [![Gem Version](https://badge.fury.io/rb/cloudenvoy.svg)](https://badge.fury.io/rb/cloudenvoy)
+![Build Status](https://github.com/keypup-io/cloudenvoy/actions/workflows/test_ruby_3.x.yml/badge.svg) [![Gem Version](https://badge.fury.io/rb/cloudenvoy.svg)](https://badge.fury.io/rb/cloudenvoy)
 
 # Cloudenvoy
 
