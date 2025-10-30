@@ -5,9 +5,9 @@ $stdout.sync = true
 
 # Require project files
 require 'sinatra'
-Dir.glob('./config/initializers/*.rb').sort.each { |file| require file }
-Dir.glob('./app/publishers/*.rb').sort.each { |file| require file }
-Dir.glob('./app/subscribers/*.rb').sort.each { |file| require file }
+Dir.glob('./config/initializers/*.rb').each { |file| require file }
+Dir.glob('./app/publishers/*.rb').each { |file| require file }
+Dir.glob('./app/subscribers/*.rb').each { |file| require file }
 
 #---------------------------------------------------
 # Routes
