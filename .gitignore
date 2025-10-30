@@ -14,5 +14,8 @@
 # Ignore lock files (e.g. Gemfile.lock)
 *.lock
 
+# Ignore the local NOTES
+/NOTES.md
+
 # rspec failure tracking
 .rspec_status
