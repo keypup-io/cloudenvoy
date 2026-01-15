@@ -38,7 +38,7 @@ if defined?(Rails)
             .with(expected_payload)
             .and_raise(ArgumentError)
         end
-        it { is_expected.to have_http_status(:unprocessable_entity) }
+        it { is_expected.to have_http_status(422) }
       end
 
       context 'with invalid subscriber' do

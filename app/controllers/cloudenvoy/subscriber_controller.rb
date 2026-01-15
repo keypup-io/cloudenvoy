@@ -27,7 +27,7 @@ module Cloudenvoy
       head :not_found
     rescue StandardError
       # 422: Message delivery will be retried
-      head :unprocessable_entity
+      head 422
     end
 
     private
