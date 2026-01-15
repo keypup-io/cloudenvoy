@@ -6,6 +6,7 @@ RSpec.describe Cloudenvoy::Config do
   let(:gcp_sub_prefix) { 'some-queue' }
   let(:processor_host) { 'http://localhost' }
   let(:processor_path) { nil }
+  let(:pub_sub_timeout) { nil }
   let(:logger) { Logger.new(nil) }
   let(:mode) { :production }
 
@@ -32,6 +33,7 @@ RSpec.describe Cloudenvoy::Config do
       c.gcp_sub_prefix = gcp_sub_prefix
       c.processor_host = processor_host
       c.processor_path = processor_path
+      c.pub_sub_timeout = pub_sub_timeout
     end
 
     Cloudenvoy.config
@@ -217,6 +219,22 @@ RSpec.describe Cloudenvoy::Config do
     subject { config.processor_url }
 
     it { is_expected.to eq("#{config.processor_host}#{config.processor_path}") }
+  end
+
+  describe '#pub_sub_timeout' do
+    subject { config.pub_sub_timeout }
+
+    context 'with value specified via config' do
+      let(:pub_sub_timeout) { 10 }
+
+      it { is_expected.to eq(pub_sub_timeout) }
+    end
+
+    context 'with no value' do
+      let(:pub_sub_timeout) { nil }
+
+      it { is_expected.to eq(described_class::DEFAULT_PUBSUB_TIMEOUT) }
+    end
   end
 
   describe '#publisher_middleware' do

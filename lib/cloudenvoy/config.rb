@@ -6,7 +6,8 @@ module Cloudenvoy
   # Holds cloudenvoy configuration. See Cloudenvoy#configure
   class Config
     attr_writer :secret, :gcp_project_id,
-                :gcp_sub_prefix, :processor_path, :logger, :mode
+                :gcp_sub_prefix, :processor_path, :logger,
+                :mode, :pub_sub_timeout
 
     # Emulator host
     EMULATOR_HOST = ENV['PUBSUB_EMULATOR_HOST'] || 'localhost:8085'
@@ -16,6 +17,9 @@ module Cloudenvoy
 
     # Maximum number of messages in a batch
     BATCH_MAX_MSG_COUNT = 1000
+
+    # The default timeout for the GCP Pub/Sub client
+    DEFAULT_PUBSUB_TIMEOUT = 30
 
     # Errors
     PROCESSOR_HOST_MISSING = <<~DOC
@@ -112,6 +116,15 @@ module Cloudenvoy
     #
     def processor_path
       @processor_path || DEFAULT_PROCESSOR_PATH
+    end
+
+    #
+    # The timeout configured on the Pub/Sub client
+    #
+    # @return [Integer] The configured timeout
+    #
+    def pub_sub_timeout
+      @pub_sub_timeout || DEFAULT_PUBSUB_TIMEOUT
     end
 
     #

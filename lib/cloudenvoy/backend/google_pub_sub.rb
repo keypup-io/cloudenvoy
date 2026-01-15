@@ -33,6 +33,7 @@ module Cloudenvoy
       #
       def backend
         @backend ||= Google::Cloud::PubSub.new(**{
+          timeout: config.pub_sub_timeout,
           project_id: config.gcp_project_id,
           emulator_host: development? ? Cloudenvoy::Config::EMULATOR_HOST : nil
         }.compact)

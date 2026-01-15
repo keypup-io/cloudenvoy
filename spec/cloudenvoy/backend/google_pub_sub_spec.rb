@@ -4,6 +4,7 @@ require 'cloudenvoy/backend/google_pub_sub'
 
 RSpec.describe Cloudenvoy::Backend::GooglePubSub do
   let(:gcp_project_id) { Cloudenvoy.config.gcp_project_id }
+  let(:pub_sub_timeout) { Cloudenvoy.config.pub_sub_timeout }
   let(:backend) { instance_double(Google::Cloud::PubSub::Project) }
   let(:gcp_topic) { instance_double(Google::Cloud::PubSub::Topic) }
 
@@ -38,14 +39,14 @@ RSpec.describe Cloudenvoy::Backend::GooglePubSub do
     end
 
     context 'with development mode' do
-      let(:expected_attrs) { { project_id: gcp_project_id, emulator_host: Cloudenvoy::Config::EMULATOR_HOST } }
+      let(:expected_attrs) { { timeout: pub_sub_timeout, project_id: gcp_project_id, emulator_host: Cloudenvoy::Config::EMULATOR_HOST } }
 
       before { allow(described_class).to receive(:development?).and_return(true) }
       it { is_expected.to eq(backend) }
     end
 
     context 'with any other mode' do
-      let(:expected_attrs) { { project_id: gcp_project_id } }
+      let(:expected_attrs) { { timeout: pub_sub_timeout, project_id: gcp_project_id } }
 
       before { allow(described_class).to receive(:development?).and_return(false) }
       it { is_expected.to eq(backend) }
